@@ -1417,12 +1417,16 @@
 
             $(document).ready(function() {
                 $('select.form-select').change(function() {
+
                     var dashboardId = $(this).attr('id').split('_')[1];
                     var remarkId = $(this).val();
                     var confirmed = confirm('Are you sure you want to change?');
 
+
                     if (confirmed) {
-                        var redirectUrl = '/ATS/change/dashboard/remark/' + dashboardId + '/' + remarkId;
+                        var redirectUrl = 'change/dashboard/remark/' + dashboardId + '/' + remarkId;
+                        console.log(redirectUrl);
+
                         window.location.href = redirectUrl;
                     }
                 });
