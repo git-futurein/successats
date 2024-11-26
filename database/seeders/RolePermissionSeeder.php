@@ -394,6 +394,34 @@ class RolePermissionSeeder extends Seeder
                     'time-sheet.edit',
                 ]
             ],
+            [
+                'group_name' => 'time-sheet',
+                'permissions' => [
+                    'time-sheet.index',
+                    'time-sheet.store',
+                    'time-sheet.create',
+                    'time-sheet.show',
+                    'time-sheet.update',
+                    'time-sheet.destroy',
+                    'time-sheet.edit',
+                ]
+            ],
+            [
+                'group_name' => 'status-forward',
+                'permissions' => [
+                    'active-resume-status',
+                    'follow-up-status',
+                    'not-suitable-faj-status',
+                    'kiv-status',
+                    'shortlisted-candidates-status',
+                    're-work-status',
+                    'assigned-to-client-status',
+                    '2-business-days-follow-up-status',
+                    'call-back-status',
+                    'interviews-status',
+                    'three-days-no-action-status',
+                ]
+            ],
         ];
 
         // Create and Assign Permissions

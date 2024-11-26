@@ -40,11 +40,11 @@
                                             <span class="d-sm-block">General Info</span>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    {{-- <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#contact_info" role="tab">
                                             <span class="d-sm-block">Contact Info</span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#bank_info" role="tab">
                                             <span class="d-sm-block">Bank Info</span>
@@ -328,6 +328,14 @@
                                                         class="form-control" value="{{ $candidate->candidate_email }}">
                                                 </div>
                                             </div>
+                                            <div class="row col-md-6 col-lg-6 mb-1">
+                                                <label for="candidate_address"
+                                                    class="col-sm-5 col-form-label fw-bold">Address</label>
+                                                <div class="col-sm-7">
+                                                    <textarea class="form-controller p-2" placeholder="Address" name="candidate_address" id="candidate_address"  cols="36" rows="3">{{ $candidate->candidate_address }}</textarea>
+                                                </div>
+                                            </div>
+
                                             {{-- <div class="row col-md-6 col-lg-6 mb-1">
                                                 <label for="candidate_outlet_id"
                                                     class="col-sm-5 col-form-label fw-bold">Outlet<span
@@ -364,13 +372,14 @@
                                         <div class="col-lg-3">
                                             @if ($candidate->avatar)
                                                 <img width="200" class="img-fluid img-thumbnail"
-                                                    src="{{ asset('storage') }}/{{ $candidate->avatar }}" alt="avatar"
+                                                    {{-- src="{{ asset('storage') }}/{{ $candidate->avatar }}" alt="avatar" --}}
+                                                    src="{{ asset( $candidate->avatar) }}" alt="avatar"
                                                     id="avatar-preview">
                                             @else
                                                 <img width="200" src="{{ URL::asset('build/images/avatar.png') }}"
                                                     alt="avatars" id="avatar-preview" class="mb-2">
                                             @endif
-                                            <input type="file" name="avatar" id="avatar-input" class="form-control"
+                                            <input type="file" name="avatar" id="avatar-input" accept="image/*" class="form-control"
                                                 accept="images">
                                         </div>
                                     </div>
@@ -385,8 +394,85 @@
                                         </div>
                                     </div>
                                 </form>
+                                <hr>
+                                <div class="tab-pane mt-4" id="contact_info" role="tabpanel">
+                                    <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <div class="row">
+                                            <h5>Emergency Contact Address Information</h5>
+                                            <div class="col-lg-6">
+                                                <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                    <div class="row mb-1">
+                                                        <label for="one" class="col-sm-3 col-form-label">Contact
+                                                            Person</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_contact"
+                                                                class="form-control" placeholder="Contact Person"
+                                                                value="{{ $candidate->candidate_emr_contact }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1">
+                                                        <label for="one" class="col-sm-3 col-form-label">Phone 1</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_phone1"
+                                                                class="form-control" placeholder="Phone 1"
+                                                                value="{{ $candidate->candidate_emr_phone1 }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1">
+                                                        <label for="four" class="col-sm-3 col-form-label">Address</label>
+                                                        <div class="col-sm-9">
+                                                            <textarea name="candidate_emr_address" rows="2" class="form-control" placeholder="Address"> {{ $candidate->candidate_emr_address }} </textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                    <div class="row mb-1">
+                                                        <label for="one"
+                                                            class="col-sm-3 col-form-label">Relationship</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_relation"
+                                                                class="form-control" placeholder="Relationship"
+                                                                value="{{ $candidate->candidate_emr_relation }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1">
+                                                        <label for="one" class="col-sm-3 col-form-label">Phone 2</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_phone2"
+                                                                class="form-control" placeholder="Phone 2"
+                                                                value="{{ $candidate->candidate_emr_phone2 }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1 ">
+                                                        <label for="four" class="col-sm-3 col-form-label">Remarks<span
+                                                            class="text-danger">*</span></label>
+                                                        <div class="col-sm-9">
+                                                            <textarea name="candidate_emr_remarks" rows="2" class="form-control" placeholder="Remarks" required> {{ $candidate->candidate_emr_remarks }} </textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-9 ms-3 mb-3">
+                                                <div>
+                                                    <a href="{{ route('candidate.index') }}"
+                                                        class="btn btn-sm btn-secondary w-md">Back</a>
+                                                    <button type="submit" class="btn btn-sm btn-info w-md">Submit</button>
+                                                    <a href="#" class="btn btn-sm btn-warning w-md">Print</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="tab-pane" id="contact_info" role="tabpanel">
+                            {{-- <div class="tab-pane" id="contact_info" role="tabpanel">
                                 <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf
@@ -521,7 +607,7 @@
                                         </div>
                                     </div>
                                 </form>
-                            </div>
+                            </div> --}}
                             <div class="tab-pane" id="bank_info" role="tabpanel">
                                 <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
                                     enctype="multipart/form-data">
@@ -1391,7 +1477,7 @@
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="interviewTime" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Interview Time</label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Interview Time <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="time" class="form-control" name="interview_time" value="{{old('interview_time')}}">
                                                     </div>
@@ -1802,16 +1888,16 @@
                                             </div>
                                             <div class="col-12 mb-1">
                                                 <div class="row">
-                                                    <label for="remarks" class="col-sm-12 col-md-1 col-form-label fw-bold">Remark</label>
+                                                    <label for="remarks" class="col-sm-12 col-md-1 col-form-label fw-bold">Remarks <span class="text-danger">*</span></label>
                                                     <div class="col-sm-12 col-md-11">
                                                         <div class="d-flex flex-row-reverse description_textarea">
-                                                            <textarea name="remarks" id="ckeditor-classic" class="editor" rows="2" required> {{ old('remarks') }} </textarea>
+                                                            <textarea name="remarks" id="ckeditor-classic" class="editor " rows="2" required> {{ old('remarks') }} </textarea>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-sm btn-info">Save</button>
+                                        <button type="submit" id="submit" class="btn btn-sm btn-info">Save</button>
                                     </form>
                                 @endif
                                 <div class="row">
@@ -2799,4 +2885,8 @@
         <script src="{{ asset('build/js/ajax/candidatePayroll.js') }}"></script>
         <script src="{{ asset('build/js/ajax/imagePreview.js') }}"></script>
         {{-- <script src="{{ asset('build/js/ajax/candidateTimeSheetGet.js') }}"></script> --}}
+        <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+
+
+
     @endsection

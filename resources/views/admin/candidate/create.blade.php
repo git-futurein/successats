@@ -37,11 +37,11 @@
                                             <span class="d-sm-block">General Info</span>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    {{-- <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#contact_info" role="tab">
                                             <span class="d-sm-block">Contact Info</span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#bank_info" role="tab">
                                             <span class="d-sm-block">Bank Info</span>
@@ -290,6 +290,13 @@
                                                     <input type="email" name="candidate_email" id="candidate_email" class="form-control" placeholder="Email" value="{{old('candidate_email')}}">
                                                 </div>
                                             </div>
+                                            <div class="row col-md-6 col-lg-6 mb-1">
+                                                <label for="candidate_address"
+                                                    class="col-sm-5 col-form-label fw-bold">Address</label>
+                                                <div class="col-sm-7">
+                                                    <textarea class="p-2 form-control" name="candidate_address" id="candidate_address"  cols="36" rows="3" placeholder="Address">{{ old('candidate_address') }}</textarea>
+                                                </div>
+                                            </div>
 
                                             <input type="hidden" name="candidate_outlet_id" value="0">
                                             {{-- <div class="row col-md-6 col-lg-6 mb-1">
@@ -328,11 +335,65 @@
                                         <div class="col-lg-3">
                                             <img src="{{ URL::asset('build/images/avatar.png') }}" alt="avatar"
                                                 class="mb-2 img-fluid img-thumbnail">
-                                            <input type="file" name="avatar" class="form-control">
+                                            <input type="file" name="avatar" accept="image/*" class="form-control">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row mt-4">
+                                        <h5>Emergency Contact Address Information</h5>
+                                        <div class="col-lg-6">
+                                            <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                <div class="row mb-1">
+                                                    <label for="one" class="col-sm-4 col-form-label">Contact
+                                                        Person</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" name="candidate_emr_contact" value="{{ old('candidate_emr_contact') }}"
+                                                            class="form-control" placeholder="Contact Person">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1">
+                                                    <label for="one" class="col-sm-4 col-form-label">Phone 1</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" name="candidate_emr_phone1" value="{{ old('candidate_emr_phone1') }}"
+                                                            class="form-control" placeholder="Phone 1">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1">
+                                                    <label for="four" class="col-sm-4 col-form-label">Address</label>
+                                                    <div class="col-sm-8">
+                                                        <textarea name="candidate_emr_address" rows="2" class="form-control" placeholder="Address">{{ old('candidate_emr_address') }}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                <div class="row mb-1">
+                                                    <label for="one"
+                                                        class="col-sm-4 col-form-label">Relationship</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" name="candidate_emr_relation" value="{{ old('candidate_emr_relation') }}"
+                                                            class="form-control" placeholder="Relationship">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1">
+                                                    <label for="one" class="col-sm-4 col-form-label">Phone 2</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" name="candidate_emr_phone2" value="{{ old('candidate_emr_phone2') }}"
+                                                            class="form-control" placeholder="Phone 2">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1">
+                                                    <label for="four" class="col-sm-4 col-form-label">Remarks</label>
+                                                    <div class="col-sm-8">
+                                                        <textarea name="candidate_emr_remarks" rows="2" class="form-control" placeholder="Remarks"> {{ old('candidate_emr_remarks') }}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="contact_info" role="tabpanel">
+                                {{-- <div class="tab-pane" id="contact_info" role="tabpanel">
                                     <div class="row">
                                         <h5>Address Information</h5>
                                         <div class="col-lg-6">
@@ -498,7 +559,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="tab-pane" id="qualification" role="tabpanel">
                                     <h5>Qualification and Skill</h5>
                                     <div class="row">

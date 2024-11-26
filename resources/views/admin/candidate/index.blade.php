@@ -37,6 +37,7 @@
                                     <th style="padding-right: 20px !important">ID</th>
                                     <th style="padding-right: 20px !important">Name</th>
                                     <th style="padding-right: 20px !important">Email</th>
+                                    <th style="padding-right: 20px !important">Address</th>
                                     <th style="padding-right: 20px !important">Mobile</th>
                                     <th style="padding-right: 20px !important">Last Update Date</th>
                                     <th style="padding-right: 20px !important">Assign</th>
@@ -53,6 +54,7 @@
                                         <td>{{ $data->id }}</td>
                                         <td  onclick="getRemark({{ $data->id }})">{{ $data->candidate_name }}</td>
                                         <td  onclick="getRemark({{ $data->id }})">{{ $data->candidate_email }}</td>
+                                        <td class="text-center">{{ $data->candidate_address ?? '--' }}</td>
                                         <td>{{ $data->candidate_mobile }}</td>
                                         <td>{{ $data->updated_at }}</td>
                                         <td>

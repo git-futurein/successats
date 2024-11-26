@@ -58,7 +58,8 @@
                                 <li><a href="{{ route('client-term.index') }}" data-key="client-terms">Client Terms</a>
                                 </li>
                             @endif
-                            <li><a href="{{ route('job-category.index') }}" data-key="industry-type">Industry Type</a></li>
+                            {{-- <li><a href="{{ route('job-category.index') }}" data-key="industry-type">Industry Type</a></li> --}}
+                            <li><a href="{{ route('industry-type.index') }}" data-key="industry-type">Industry Type</a></li>
                         </ul>
                     </li>
                 @endif
