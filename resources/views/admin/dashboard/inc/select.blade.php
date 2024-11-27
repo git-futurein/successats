@@ -2,7 +2,7 @@
     aria-label="Default select example">
     <option disabled {{ $candidate['remark_id'] == 0 ? 'selected' : '' }}>
         Active Resume</option>
-    <option value="6" disabled  {{ $candidate['remark_id'] == 6 ? 'selected' : '' }}>
+    <option value="6" {{ $candidate['remark_id'] == 6 ? 'selected' : '' }}>
         Follow Up</option>
     <option value="2" {{ $candidate['remark_id'] == 2 ? 'selected' : '' }}>
         FAJ</option>

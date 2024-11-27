@@ -1462,7 +1462,7 @@
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="AssignToClient" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Client </label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Client <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
                                                         <select name="assign_client_id" id="assign_client_id"
                                                             class="form-control single-select-field">
@@ -1485,17 +1485,17 @@
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="callbackDate" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Date</label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Date <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
-                                                        <input type="date" class="form-control" name="callbackDate" value="{{old('callbackDate')}}">
+                                                        <input type="date" class="form-control" id="callbackDateInput" name="callbackDate" value="{{old('callbackDate')}}">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="callbackTime" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Time</label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Time <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
-                                                        <input type="time" class="form-control" name="callbackTime" value="{{old('callbackTime')}}">
+                                                        <input type="time" class="form-control" id="callbackTimeInput" name="callbackTime" value="{{old('callbackTime')}}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1891,7 +1891,7 @@
                                                     <label for="remarks" class="col-sm-12 col-md-1 col-form-label fw-bold">Remarks <span class="text-danger">*</span></label>
                                                     <div class="col-sm-12 col-md-11">
                                                         <div class="d-flex flex-row-reverse description_textarea">
-                                                            <textarea name="remarks" id="ckeditor-classic" class="editor " rows="2" required> {{ old('remarks') }} </textarea>
+                                                            <textarea name="remarks" id="ckeditor-classic" class="editor " rows="2"> {{ old('remarks') }} </textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1906,6 +1906,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
+                                                    <th>Name</th>
                                                     <th>Assign</th>
                                                     <th>Client</th>
                                                     <th>Remarks Type</th>
@@ -1920,6 +1921,7 @@
                                                 @foreach($client_remarks as $remark)
                                                     <tr>
                                                         <td>{{ $loop->index + 1 }}</td>
+                                                        <td>{{ $remark->candidate?->candidate_name }}</td>
                                                         <td>{{ $remark->assignTo?->employee_name }}</td>
                                                         <td>{{ $remark->client?->client_name ?? $remark->assign_client?->client?->client_name  }}</td>
                                                         <td>{{ $remark->remarksType->remarkstype_code }}</td>
@@ -2498,9 +2500,9 @@
                                         <div class="mt-5 mt-lg-4 mt-xl-0">
                                             <div class="row mb-1">
                                                 <label for="file_path" class="col-sm-3 col-form-label">Upload
-                                                    File (<span class="text-danger">Pdf Only **</span>)</label>
+                                                    File (<span class="text-danger">Pdf,Doc,Docx,Jpg,Jpeg,Png</span>)(Max size : 2MB)</label>
                                                 <div class="col-sm-9">
-                                                    <input type="file" name="file_path" class="form-control">
+                                                    <input type="file" name="file_path"  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"  class="form-control">
                                                 </div>
                                             </div>
                                             <div class="row mb-1">
@@ -2763,6 +2765,15 @@
                         $('#shortlistContractEndDate').hide().css('display', 'none');
                         $('#shortlist_contract_end_date').prop('required', false);
                     }
+
+                    if (selectedValue === '22') {
+                        $('#callbackDateInput').prop('required',true);
+                        $('#callbackTimeInput').prop('required',true);
+                    }else{
+                        $('#callbackDateInput').prop('required',false);
+                        $('#callbackTimeInput').prop('required',false);
+                    }
+
                 });
                 $('#remark_type_test').trigger('change');
 

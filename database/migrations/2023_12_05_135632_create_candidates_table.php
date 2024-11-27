@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('candidate_name')->nullable();
             $table->string('candidate_home_phone')->nullable();
             $table->string('candidate_email')->nullable();
+            $table->string('candidate_address')->nullable();
             $table->integer('passtypes_id')->nullable()->comment('link to pass type table');
             $table->string('candidate_nric')->nullable();
             $table->string('candidate_mobile')->nullable();

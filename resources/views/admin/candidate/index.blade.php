@@ -67,9 +67,6 @@
                                         <td>
                                             {{ candidate_group($data->id) }}
                                         </td>
-                                        {{-- <td class="text-{{ \App\Enums\Status::from($data->candidate_status)->message() }}">
-                                            {{ \App\Enums\Status::from($data->candidate_status)->title() }}
-                                        </td> --}}
                                         <td class="d-flex justify-content-end">
                                             @if($data->getMainResumeFilePath() != null)
                                             <button type="button"
@@ -77,7 +74,7 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#showResume"
                                                 data-file-path="{{ $data->getMainResumeFilePath() }}">D</button>
-                                            <a target="__blank" href="{{ asset('storage') }}/{{ $data->getMainResumeFilePath() }}" class="btn btn-info btn-sm me-1"><i class="fas fa-download"></i></a></a>
+                                            <a target="_blank" href="{{ asset('storage') }}/{{ $data->getMainResumeFilePath() }}" class="btn btn-info btn-sm me-1"><i class="fas fa-download"></i></a>
                                             @endif
                                             @if (App\Helpers\FileHelper::usr()->can('candidate.remark'))
                                                 <a href="{{ route('candidate.edit', $data->id) }}#remark"
@@ -113,6 +110,7 @@
                                     <thead>
                                         <tr>
                                             <th>Count</th>
+                                            <th>Name</th>
                                             <th>Assign To</th>
                                             <th>Client</th>
                                             <th>Remarks Type</th>
@@ -163,6 +161,8 @@
                         let remarkData = response.remarks;
                         let candidateResume = document.getElementById('candidateResume');
 
+                        // console.log(remarkData);
+
                         if (candidateResume.style.display === 'none') {
                             candidateResume.style.display = 'block';
                         }
@@ -179,6 +179,7 @@
                             let count = 1 + i;
                             let newRowHtml = '<tr>' +
                                     '<th scope="row">' + count + '</th>' +
+                                    '<td style="padding-right: 20px !important">' + remarkData[i].candidate_name + '</td>' +
                                     '<td>' + remarkData[i].assign_to + '</td>' +
                                     '<td>' + remarkData[i].client + '</td>' +
                                     '<td>' + remarkData[i].remarkstype + '</td>' +
