@@ -74,7 +74,7 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#showResume"
                                                 data-file-path="{{ $data->getMainResumeFilePath() }}">D</button>
-                                            <a target="_blank" href="{{ asset('storage') }}/{{ $data->getMainResumeFilePath() }}" class="btn btn-info btn-sm me-1"><i class="fas fa-download"></i></a>
+                                            <a target="_blank" href="{{ asset('public') }}/{{ $data->getMainResumeFilePath() }}" class="btn btn-info btn-sm me-1"><i class="fas fa-download"></i></a>
                                             @endif
                                             @if (App\Helpers\FileHelper::usr()->can('candidate.remark'))
                                                 <a href="{{ route('candidate.edit', $data->id) }}#remark"

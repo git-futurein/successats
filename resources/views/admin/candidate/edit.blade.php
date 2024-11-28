@@ -1267,7 +1267,8 @@
                                                     <div class="p-2 flex-grow-1 bd-highlight">
                                                         <h6 class="card-title mb-0">Upload Resume</h6>
                                                     </div>
-                                                    <div class="p-2 bd-highlight">
+                                                    <div class="p-2 bd-highlight upload_resume">
+
                                                         <a data-bs-toggle="modal"
                                                         data-bs-target=".bs-example-modal-lg-create-resume"
                                                         class="btn btn-sm btn-info">Upload New Resume</a>
@@ -1310,13 +1311,13 @@
                                                             {{ $resume->modify_name->name }}
                                                         </td>
                                                         <?php
-                                                        $path = $resume->resume_file_path;
-                                                        $parts = explode('/', $path);
-                                                        $filename = end($parts);
-                                                        $filenameParts = explode('_', $filename);
-                                                        $cleanedFilename = end($filenameParts);
+                                                        // $path = $resume->resume_file_path;
+                                                        // $parts = explode('/', $path);
+                                                        // $filename = end($parts);
+                                                        // $filenameParts = explode('_', $filename);
+                                                        // $cleanedFilename = end($filenameParts);
                                                         ?>
-                                                        <td>{{ $cleanedFilename }}</td>
+                                                        <td>{{ $resume->resume_name }}</td>
                                                         <td>
                                                             {{ $resume->updated_at }}
                                                         </td>
@@ -2541,18 +2542,20 @@
                                         @csrf
                                         <input type="hidden" name="candidate_id" value="{{ $candidate->id }}"
                                             class="form-control">
+                                        {{-- <input type="hidden" name="candidate_name" value="{{ $candidate->candidate_name }}" --}}
+                                            {{-- class="form-control"> --}}
                                         <div class="mt-5 mt-lg-4 mt-xl-0">
                                             <div class="row mb-1">
                                                 <label for="resume_name" class="col-sm-3 col-form-label">Resume
                                                     Name</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" id="resume_name" name="resume_name" class="form-control" value="{{ old('resume_name') }}">
+                                                    <input type="text" id="resume_name" data-candidate_name="{{ $candidate->candidate_name }}" name="resume_name" class="form-control" value="{{ old('resume_name') }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-1">
                                                 <label for="resume_file_path" class="col-sm-3 col-form-label">Upload File</label>
                                                 <div class="col-sm-9">
-                                                    <input type="file" name="resume_file_path" class="form-control">
+                                                    <input type="file" name="resume_file_path" class="form-control" accept=".pdf,.doc,.docx">
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-sm btn-info w-md">Submit</button>
@@ -2875,17 +2878,35 @@
                 });
             });
 
-            window.onload = function() {
-                generateResumeName();
-            };
+            // window.onload = function() {
+            //     generateResumeName();
+            // };
+            $(document).on('click','.upload_resume',function(){
+                // var resumeNameInput = document.getElementById("resume_name");
+                let resumeNameInput = $('#resume_name');
+                let candidateName = resumeNameInput.data('candidate_name');
 
-            function generateResumeName() {
-                var resumeNameInput = document.getElementById("resume_name");
-                if (!resumeNameInput.value) { // Check if the input field is empty
-                    var timestamp = Date.now(); // Get the current timestamp
-                    resumeNameInput.value = "resume_" + timestamp;
-                }
-            }
+                resumeNameInput.empty();
+                var now = new Date();
+                var currentTime =  now.getHours().toString().padStart(2, '0') +
+                                    now.getMinutes().toString().padStart(2, '0') +
+                                    now.getSeconds().toString().padStart(2, '0');
+                resumeNameInput.val(candidateName + '-' + currentTime);
+            })
+
+            // function generateResumeName() {
+            //     var resumeNameInput = document.getElementById("resume_name");
+            //     let candidateName = resumeNameInput.dataset.candidate_name;
+            //     resumeNameInput.value('');
+
+            //     // if (!resumeNameInput.value) {
+            //         var now = new Date();
+            //         var currentTime =  now.getHours().toString().padStart(2, '0') +
+            //                            now.getMinutes().toString().padStart(2, '0') +
+            //                            now.getSeconds().toString().padStart(2, '0');
+            //         resumeNameInput.value = candidateName + '-' + currentTime;
+            //     // }
+            // }
 
         </script>
 

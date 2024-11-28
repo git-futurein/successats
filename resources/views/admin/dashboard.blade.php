@@ -8,6 +8,16 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <link href="{{ URL::asset('build/libs/fullcalendar/main.min.css') }}" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+        .modal-xxl{
+            --bs-modal-width: 90rem;
+        }
+
+    </style>
+
 @endsection
 @section('body')
     <style>
@@ -97,7 +107,6 @@
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($own_manager ?? [] as $manager)
-
                                                             <tr>
                                                                 <td>{{ $loop->index + 1 }}</td>
                                                                 <td>{{ $manager->candidate->candidate_name }}</td>
@@ -356,6 +365,7 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($activeResumes ?? [] as $candidate)
+                                                    {{-- @dump($candidate); --}}
                                                         <tr style="cursor: pointer" class="accordion-row"
                                                             id="{{ $candidate['candidate_id'] }}"
                                                             data-candidate-name="{{ $candidate->candidate['candidate_name'] }}">
@@ -1240,11 +1250,34 @@
         <div style='clear:both'></div>
 
         @include('admin.candidate.inc.resume__modal')
+        <!--Interview modal-->
+        @include('admin.dashboard.inc.interviewDataModal')
+
+
+
+        @if(Cache::get('emptyInterview'))
+            @php
+                Cache::forget('emptyInterview');
+            @endphp
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var modalElement = document.getElementById('showInterviewModal');
+                    var modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                });
+            </script>
+        @endif
+
+
+
+
+
     @endsection
     @section('scripts')
         <link rel="stylesheet" type="text/css"
             href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/moment.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.js"></script>
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
@@ -1379,7 +1412,8 @@
                     let filePath = $(this).data('file-path');
                     const iframe = document.getElementById('pdfViewer');
                     if (filePath) {
-                        let publicUrl = "{{ asset(Storage::url('')) }}" + "/" + filePath;
+                        // let publicUrl = "{{ asset(Storage::url('')) }}" + "/" + filePath;
+                        let publicUrl = "{{ asset('') }}" + filePath;
 
                         // Check if the publicUrl exists
                         $.ajax({
@@ -1438,9 +1472,8 @@
 
 
                     if (confirmed) {
-                        var redirectUrl = 'change/dashboard/remark/' + dashboardId + '/' + remarkId;
-                        console.log(redirectUrl);
 
+                        var redirectUrl = 'change/dashboard/remark/' + dashboardId + '/' + remarkId;
                         window.location.href = redirectUrl;
                     }
                 });
@@ -1455,4 +1488,9 @@
             }
 
         </script>
+
+        <script>
+        </script>
+
+
     @endsection

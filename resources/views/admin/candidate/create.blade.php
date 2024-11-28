@@ -117,7 +117,7 @@
                                             @endif
                                             @if ($auth->roles_id == 1 || $auth->roles_id == 4)
                                             <div class="row col-md-6 col-lg-6 mb-1">
-                                                <label for="teamLeaderSelect" class="col-sm-5 col-form-label fw-bold">Team Leader<span class="text-danger">*</span></label>
+                                                <label for="teamLeaderSelect" class="col-sm-5 col-form-label fw-bold">Team Leader</label>
                                                 <div class="col-sm-7">
                                                     <select name="team_leader_id" id="teamLeaderSelect"
                                                         class="form-control single-select-field">
@@ -129,8 +129,7 @@
                                             @if ($auth->roles_id == 1 || $auth->roles_id == 4 || $auth->roles_id == 11)
                                             <div class="row col-md-6 col-lg-6 mb-1">
                                                 <label for="consultantSelect"
-                                                    class="col-sm-5 col-form-label fw-bold">Consultant<span
-                                                        class="text-danger">*</span></label>
+                                                    class="col-sm-5 col-form-label fw-bold">Consultant</label>
                                                 <div class="col-sm-7">
                                                     <select id="consultantSelect" class="form-control single-select-field" name="consultant_id">
                                                         <option value="" selected disabled>Select One </option>
@@ -287,7 +286,7 @@
                                                     class="col-sm-5 col-form-label fw-bold">Email<span
                                                         class="text-danger">*</span></label>
                                                 <div class="col-sm-7">
-                                                    <input type="email" name="candidate_email" id="candidate_email" class="form-control" placeholder="Email" value="{{old('candidate_email')}}">
+                                                    <input type="email" name="candidate_email" id="candidate_email" class="form-control" placeholder="Email" value="{{old('candidate_email')}}" required>
                                                 </div>
                                             </div>
                                             <div class="row col-md-6 col-lg-6 mb-1">
