@@ -173,6 +173,9 @@
                                                         <select id="consultantSelect"
                                                             class="form-control single-select-field" name="consultant_id">
                                                             <option value="" selected disabled>Select One </option>
+                                                            @foreach($consultants as $consultant)
+                                                                
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>

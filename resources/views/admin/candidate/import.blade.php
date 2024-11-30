@@ -38,7 +38,7 @@
                                         <small>(Please use PDF, MicrosoftWord.docx orxlsx file)</small></label>
                                     <div class="col-sm-6">
                                         <input type="file" name="files[]" class="form-control"
-                                            accept=".pdf,.docx,.xlsx" multiple>
+                                            accept=".pdf,.docx,.xlsx,.txt" multiple>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-sm btn-info">Import Resume</button>
