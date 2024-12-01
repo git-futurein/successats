@@ -8,6 +8,16 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <link href="{{ URL::asset('build/libs/fullcalendar/main.min.css') }}" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+        .modal-xxl{
+            --bs-modal-width: 90rem;
+        }
+
+    </style>
+
 @endsection
 @section('body')
     <style>
@@ -97,7 +107,6 @@
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($own_manager ?? [] as $manager)
-
                                                             <tr>
                                                                 <td>{{ $loop->index + 1 }}</td>
                                                                 <td>{{ $manager->candidate->candidate_name }}</td>
@@ -320,6 +329,9 @@
                             </div>
                         </div>
                     @endforeach
+                    @php
+                        $usr = Auth::guard('web')->user();
+                    @endphp
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-body">
@@ -353,6 +365,7 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($activeResumes ?? [] as $candidate)
+                                                    {{-- @dump($candidate); --}}
                                                         <tr style="cursor: pointer" class="accordion-row"
                                                             id="{{ $candidate['candidate_id'] }}"
                                                             data-candidate-name="{{ $candidate->candidate['candidate_name'] }}">
@@ -368,7 +381,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row">
-                                                                @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                @if ($usr->can('active-resume-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks" class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -448,7 +462,8 @@
                                                                 <td>{{ \Carbon\Carbon::parse($candidate->candidate['created_at'])->format('d-M-Y') }}
                                                                 </td>
                                                                 <td class="d-flex flex-row">
-                                                                     @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                     {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                    @if ($usr->can('follow-up-status',))
                                                                         @include('admin.dashboard.inc.select')
                                                                     @endif
                                                                     <a title="Add Remarks" class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -535,7 +550,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row {{ $candidate['remark_id'] == 8 ? 'text-danger' : '' }}">
-                                                                @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                @if ($usr->can('not-suitable-faj-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks" class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -609,7 +625,8 @@
                                                                 <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                                 </td>
                                                                 <td class="d-flex flex-row">
-                                                                    @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                    {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                    @if ($usr->can('kiv-status'))
                                                                         @include('admin.dashboard.inc.select')
                                                                     @endif
                                                                     <a title="Add Remarks" class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -676,7 +693,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row">
-                                                                @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                @if ($usr->can('shortlisted-candidates-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks"  class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -741,7 +759,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row">
-                                                                @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                @if ($usr->can('re-work-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks"  class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -806,7 +825,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row">
-                                                                @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                @if ($usr->can('assigned-to-client-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks"  class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -870,7 +890,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row">
-                                                                @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                @if ($usr->can('2-business-days-follow-up-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks"  class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -1020,7 +1041,8 @@
                                                                 <td>{{ \Carbon\Carbon::parse($candidate->candidate['created_at'])->format('d-M-Y') }}
                                                                 </td>
                                                                 <td class="d-flex flex-row">
-                                                                    @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                    {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                    @if ($usr->can('call-back-status'))
                                                                         @include('admin.dashboard.inc.select')
                                                                     @endif
                                                                     <a title="Add Remarks" class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -1095,7 +1117,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row">
-                                                                 @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                 {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                @if ($usr->can('interviews-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks" class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -1160,7 +1183,8 @@
                                                             <td>{{ $candidate->candidate?->consultant?->employee_code ?? $candidate->candidate?->team_leader?->employee_code }}
                                                             </td>
                                                             <td class="d-flex flex-row">
-                                                                 @if ($auth->roles_id == 4 || $auth->roles_id == 11)
+                                                                 {{-- @if ($auth->roles_id == 4 || $auth->roles_id == 11) --}}
+                                                                 @if ($usr->can('three-days-no-action-status'))
                                                                     @include('admin.dashboard.inc.select')
                                                                 @endif
                                                                 <a title="Add Remarks"  class="btn btn-warning btn-sm me-2 resumePath" href="{{ URL::to('/ATS/candidate/'.$candidate->candidate_id.'/edit#remark') }}"><i class="fas fa-plus"></i> R</a>
@@ -1226,11 +1250,34 @@
         <div style='clear:both'></div>
 
         @include('admin.candidate.inc.resume__modal')
+        <!--Interview modal-->
+        @include('admin.dashboard.inc.interviewDataModal')
+
+
+
+        @if(Cache::get('emptyInterview'))
+            @php
+                Cache::forget('emptyInterview');
+            @endphp
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var modalElement = document.getElementById('showInterviewModal');
+                    var modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                });
+            </script>
+        @endif
+
+
+
+
+
     @endsection
     @section('scripts')
         <link rel="stylesheet" type="text/css"
             href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/moment.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.js"></script>
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
@@ -1365,7 +1412,8 @@
                     let filePath = $(this).data('file-path');
                     const iframe = document.getElementById('pdfViewer');
                     if (filePath) {
-                        let publicUrl = "{{ asset(Storage::url('')) }}" + "/" + filePath;
+                        // let publicUrl = "{{ asset(Storage::url('')) }}" + "/" + filePath;
+                        let publicUrl = "{{ asset('') }}" + filePath;
 
                         // Check if the publicUrl exists
                         $.ajax({
@@ -1417,12 +1465,15 @@
 
             $(document).ready(function() {
                 $('select.form-select').change(function() {
+
                     var dashboardId = $(this).attr('id').split('_')[1];
                     var remarkId = $(this).val();
                     var confirmed = confirm('Are you sure you want to change?');
 
+
                     if (confirmed) {
-                        var redirectUrl = '/ATS/change/dashboard/remark/' + dashboardId + '/' + remarkId;
+
+                        var redirectUrl = 'change/dashboard/remark/' + dashboardId + '/' + remarkId;
                         window.location.href = redirectUrl;
                     }
                 });
@@ -1437,4 +1488,9 @@
             }
 
         </script>
+
+        <script>
+        </script>
+
+
     @endsection

@@ -40,11 +40,11 @@
                                             <span class="d-sm-block">General Info</span>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    {{-- <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#contact_info" role="tab">
                                             <span class="d-sm-block">Contact Info</span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#bank_info" role="tab">
                                             <span class="d-sm-block">Bank Info</span>
@@ -173,6 +173,9 @@
                                                         <select id="consultantSelect"
                                                             class="form-control single-select-field" name="consultant_id">
                                                             <option value="" selected disabled>Select One </option>
+                                                            @foreach($consultants as $consultant)
+                                                                
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -328,6 +331,14 @@
                                                         class="form-control" value="{{ $candidate->candidate_email }}">
                                                 </div>
                                             </div>
+                                            <div class="row col-md-6 col-lg-6 mb-1">
+                                                <label for="candidate_address"
+                                                    class="col-sm-5 col-form-label fw-bold">Address</label>
+                                                <div class="col-sm-7">
+                                                    <textarea class="form-controller p-2" placeholder="Address" name="candidate_address" id="candidate_address"  cols="36" rows="3">{{ $candidate->candidate_address }}</textarea>
+                                                </div>
+                                            </div>
+
                                             {{-- <div class="row col-md-6 col-lg-6 mb-1">
                                                 <label for="candidate_outlet_id"
                                                     class="col-sm-5 col-form-label fw-bold">Outlet<span
@@ -364,13 +375,14 @@
                                         <div class="col-lg-3">
                                             @if ($candidate->avatar)
                                                 <img width="200" class="img-fluid img-thumbnail"
-                                                    src="{{ asset('storage') }}/{{ $candidate->avatar }}" alt="avatar"
+                                                    {{-- src="{{ asset('storage') }}/{{ $candidate->avatar }}" alt="avatar" --}}
+                                                    src="{{ asset( $candidate->avatar) }}" alt="avatar"
                                                     id="avatar-preview">
                                             @else
                                                 <img width="200" src="{{ URL::asset('build/images/avatar.png') }}"
                                                     alt="avatars" id="avatar-preview" class="mb-2">
                                             @endif
-                                            <input type="file" name="avatar" id="avatar-input" class="form-control"
+                                            <input type="file" name="avatar" id="avatar-input" accept="image/*" class="form-control"
                                                 accept="images">
                                         </div>
                                     </div>
@@ -385,8 +397,85 @@
                                         </div>
                                     </div>
                                 </form>
+                                <hr>
+                                <div class="tab-pane mt-4" id="contact_info" role="tabpanel">
+                                    <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <div class="row">
+                                            <h5>Emergency Contact Address Information</h5>
+                                            <div class="col-lg-6">
+                                                <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                    <div class="row mb-1">
+                                                        <label for="one" class="col-sm-3 col-form-label">Contact
+                                                            Person</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_contact"
+                                                                class="form-control" placeholder="Contact Person"
+                                                                value="{{ $candidate->candidate_emr_contact }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1">
+                                                        <label for="one" class="col-sm-3 col-form-label">Phone 1</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_phone1"
+                                                                class="form-control" placeholder="Phone 1"
+                                                                value="{{ $candidate->candidate_emr_phone1 }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1">
+                                                        <label for="four" class="col-sm-3 col-form-label">Address</label>
+                                                        <div class="col-sm-9">
+                                                            <textarea name="candidate_emr_address" rows="2" class="form-control" placeholder="Address"> {{ $candidate->candidate_emr_address }} </textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                    <div class="row mb-1">
+                                                        <label for="one"
+                                                            class="col-sm-3 col-form-label">Relationship</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_relation"
+                                                                class="form-control" placeholder="Relationship"
+                                                                value="{{ $candidate->candidate_emr_relation }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1">
+                                                        <label for="one" class="col-sm-3 col-form-label">Phone 2</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="candidate_emr_phone2"
+                                                                class="form-control" placeholder="Phone 2"
+                                                                value="{{ $candidate->candidate_emr_phone2 }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1 ">
+                                                        <label for="four" class="col-sm-3 col-form-label">Remarks<span
+                                                            class="text-danger">*</span></label>
+                                                        <div class="col-sm-9">
+                                                            <textarea name="candidate_emr_remarks" rows="2" class="form-control" placeholder="Remarks" required> {{ $candidate->candidate_emr_remarks }} </textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-9 ms-3 mb-3">
+                                                <div>
+                                                    <a href="{{ route('candidate.index') }}"
+                                                        class="btn btn-sm btn-secondary w-md">Back</a>
+                                                    <button type="submit" class="btn btn-sm btn-info w-md">Submit</button>
+                                                    <a href="#" class="btn btn-sm btn-warning w-md">Print</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="tab-pane" id="contact_info" role="tabpanel">
+                            {{-- <div class="tab-pane" id="contact_info" role="tabpanel">
                                 <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf
@@ -521,7 +610,7 @@
                                         </div>
                                     </div>
                                 </form>
-                            </div>
+                            </div> --}}
                             <div class="tab-pane" id="bank_info" role="tabpanel">
                                 <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
                                     enctype="multipart/form-data">
@@ -1181,7 +1270,8 @@
                                                     <div class="p-2 flex-grow-1 bd-highlight">
                                                         <h6 class="card-title mb-0">Upload Resume</h6>
                                                     </div>
-                                                    <div class="p-2 bd-highlight">
+                                                    <div class="p-2 bd-highlight upload_resume">
+
                                                         <a data-bs-toggle="modal"
                                                         data-bs-target=".bs-example-modal-lg-create-resume"
                                                         class="btn btn-sm btn-info">Upload New Resume</a>
@@ -1224,13 +1314,13 @@
                                                             {{ $resume->modify_name->name }}
                                                         </td>
                                                         <?php
-                                                        $path = $resume->resume_file_path;
-                                                        $parts = explode('/', $path);
-                                                        $filename = end($parts);
-                                                        $filenameParts = explode('_', $filename);
-                                                        $cleanedFilename = end($filenameParts);
+                                                        // $path = $resume->resume_file_path;
+                                                        // $parts = explode('/', $path);
+                                                        // $filename = end($parts);
+                                                        // $filenameParts = explode('_', $filename);
+                                                        // $cleanedFilename = end($filenameParts);
                                                         ?>
-                                                        <td>{{ $cleanedFilename }}</td>
+                                                        <td>{{ $resume->resume_name }}</td>
                                                         <td>
                                                             {{ $resume->updated_at }}
                                                         </td>
@@ -1376,7 +1466,7 @@
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="AssignToClient" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Client </label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Client <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
                                                         <select name="assign_client_id" id="assign_client_id"
                                                             class="form-control single-select-field">
@@ -1391,7 +1481,7 @@
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="interviewTime" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Interview Time</label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Interview Time <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="time" class="form-control" name="interview_time" value="{{old('interview_time')}}">
                                                     </div>
@@ -1399,17 +1489,17 @@
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="callbackDate" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Date</label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Date <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
-                                                        <input type="date" class="form-control" name="callbackDate" value="{{old('callbackDate')}}">
+                                                        <input type="date" class="form-control" id="callbackDateInput" name="callbackDate" value="{{old('callbackDate')}}">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-lg-6 mb-1" id="callbackTime" style="display: none;">
                                                 <div class="row">
-                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Time</label>
+                                                    <label for="one" class="col-sm-3 col-form-label fw-bold">Callback Time <span class="text-danger">*</span></label>
                                                     <div class="col-sm-9">
-                                                        <input type="time" class="form-control" name="callbackTime" value="{{old('callbackTime')}}">
+                                                        <input type="time" class="form-control" id="callbackTimeInput" name="callbackTime" value="{{old('callbackTime')}}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1802,16 +1892,16 @@
                                             </div>
                                             <div class="col-12 mb-1">
                                                 <div class="row">
-                                                    <label for="remarks" class="col-sm-12 col-md-1 col-form-label fw-bold">Remark</label>
+                                                    <label for="remarks" class="col-sm-12 col-md-1 col-form-label fw-bold">Remarks <span class="text-danger">*</span></label>
                                                     <div class="col-sm-12 col-md-11">
                                                         <div class="d-flex flex-row-reverse description_textarea">
-                                                            <textarea name="remarks" id="ckeditor-classic" class="editor" rows="2" required> {{ old('remarks') }} </textarea>
+                                                            <textarea name="remarks" id="ckeditor-classic" class="editor " rows="2"> {{ old('remarks') }} </textarea>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-sm btn-info">Save</button>
+                                        <button type="submit" id="submit" class="btn btn-sm btn-info">Save</button>
                                     </form>
                                 @endif
                                 <div class="row">
@@ -1820,6 +1910,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
+                                                    <th>Name</th>
                                                     <th>Assign</th>
                                                     <th>Client</th>
                                                     <th>Remarks Type</th>
@@ -1834,6 +1925,7 @@
                                                 @foreach($client_remarks as $remark)
                                                     <tr>
                                                         <td>{{ $loop->index + 1 }}</td>
+                                                        <td>{{ $remark->candidate?->candidate_name }}</td>
                                                         <td>{{ $remark->assignTo?->employee_name }}</td>
                                                         <td>{{ $remark->client?->client_name ?? $remark->assign_client?->client?->client_name  }}</td>
                                                         <td>{{ $remark->remarksType->remarkstype_code }}</td>
@@ -2412,9 +2504,9 @@
                                         <div class="mt-5 mt-lg-4 mt-xl-0">
                                             <div class="row mb-1">
                                                 <label for="file_path" class="col-sm-3 col-form-label">Upload
-                                                    File (<span class="text-danger">Pdf Only **</span>)</label>
+                                                    File (<span class="text-danger">Pdf,Doc,Docx,Jpg,Jpeg,Png</span>)(Max size : 2MB)</label>
                                                 <div class="col-sm-9">
-                                                    <input type="file" name="file_path" class="form-control">
+                                                    <input type="file" name="file_path"  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"  class="form-control">
                                                 </div>
                                             </div>
                                             <div class="row mb-1">
@@ -2453,18 +2545,20 @@
                                         @csrf
                                         <input type="hidden" name="candidate_id" value="{{ $candidate->id }}"
                                             class="form-control">
+                                        {{-- <input type="hidden" name="candidate_name" value="{{ $candidate->candidate_name }}" --}}
+                                            {{-- class="form-control"> --}}
                                         <div class="mt-5 mt-lg-4 mt-xl-0">
                                             <div class="row mb-1">
                                                 <label for="resume_name" class="col-sm-3 col-form-label">Resume
                                                     Name</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" id="resume_name" name="resume_name" class="form-control" value="{{ old('resume_name') }}">
+                                                    <input type="text" id="resume_name" data-candidate_name="{{ $candidate->candidate_name }}" name="resume_name" class="form-control" value="{{ old('resume_name') }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-1">
                                                 <label for="resume_file_path" class="col-sm-3 col-form-label">Upload File</label>
                                                 <div class="col-sm-9">
-                                                    <input type="file" name="resume_file_path" class="form-control">
+                                                    <input type="file" name="resume_file_path" class="form-control" accept=".pdf,.doc,.docx">
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-sm btn-info w-md">Submit</button>
@@ -2677,6 +2771,15 @@
                         $('#shortlistContractEndDate').hide().css('display', 'none');
                         $('#shortlist_contract_end_date').prop('required', false);
                     }
+
+                    if (selectedValue === '22') {
+                        $('#callbackDateInput').prop('required',true);
+                        $('#callbackTimeInput').prop('required',true);
+                    }else{
+                        $('#callbackDateInput').prop('required',false);
+                        $('#callbackTimeInput').prop('required',false);
+                    }
+
                 });
                 $('#remark_type_test').trigger('change');
 
@@ -2778,17 +2881,35 @@
                 });
             });
 
-            window.onload = function() {
-                generateResumeName();
-            };
+            // window.onload = function() {
+            //     generateResumeName();
+            // };
+            $(document).on('click','.upload_resume',function(){
+                // var resumeNameInput = document.getElementById("resume_name");
+                let resumeNameInput = $('#resume_name');
+                let candidateName = resumeNameInput.data('candidate_name');
 
-            function generateResumeName() {
-                var resumeNameInput = document.getElementById("resume_name");
-                if (!resumeNameInput.value) { // Check if the input field is empty
-                    var timestamp = Date.now(); // Get the current timestamp
-                    resumeNameInput.value = "resume_" + timestamp;
-                }
-            }
+                resumeNameInput.empty();
+                var now = new Date();
+                var currentTime =  now.getHours().toString().padStart(2, '0') +
+                                    now.getMinutes().toString().padStart(2, '0') +
+                                    now.getSeconds().toString().padStart(2, '0');
+                resumeNameInput.val(candidateName + '-' + currentTime);
+            })
+
+            // function generateResumeName() {
+            //     var resumeNameInput = document.getElementById("resume_name");
+            //     let candidateName = resumeNameInput.dataset.candidate_name;
+            //     resumeNameInput.value('');
+
+            //     // if (!resumeNameInput.value) {
+            //         var now = new Date();
+            //         var currentTime =  now.getHours().toString().padStart(2, '0') +
+            //                            now.getMinutes().toString().padStart(2, '0') +
+            //                            now.getSeconds().toString().padStart(2, '0');
+            //         resumeNameInput.value = candidateName + '-' + currentTime;
+            //     // }
+            // }
 
         </script>
 
@@ -2799,4 +2920,8 @@
         <script src="{{ asset('build/js/ajax/candidatePayroll.js') }}"></script>
         <script src="{{ asset('build/js/ajax/imagePreview.js') }}"></script>
         {{-- <script src="{{ asset('build/js/ajax/candidateTimeSheetGet.js') }}"></script> --}}
+        <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+
+
+
     @endsection

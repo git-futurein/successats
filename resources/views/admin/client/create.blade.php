@@ -229,9 +229,9 @@
                                         </div>
                                     </div>
                                     <div class="row col-lg-6  mb-1">
-                                        <label for="twenteen" class="col-sm-5 col-form-label">Email</label>
+                                        <label for="twenteen" class="col-sm-5 col-form-label">Email <span class="text-danger">*</span></label>
                                         <div class="col-sm-7">
-                                            <input type="email" name="client_email" class="form-control"
+                                            <input type="email" name="client_email" class="form-control" required
                                                 placeholder="Email" value="{{ old('client_email') }}">
                                         </div>
                                     </div>

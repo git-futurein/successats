@@ -88,6 +88,7 @@ Route::prefix('ATS')->group(function () {
     });
 
     Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard.index');
+    Route::post('/interviewAssign/{id}', [DashboardController::class, 'interviewAssign'])->name('admin.dashboard.interviewassign');
     // Route::get('/employeefetch',[App\Http\Controllers\Action\FetchEmployeeController::class])->name('employee.fetch');
 
     Route::resources([

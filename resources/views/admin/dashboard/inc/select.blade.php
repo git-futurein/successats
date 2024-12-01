@@ -2,13 +2,13 @@
     aria-label="Default select example">
     <option disabled {{ $candidate['remark_id'] == 0 ? 'selected' : '' }}>
         Active Resume</option>
-    <option disabled {{ $candidate['remark_id'] == 6 ? 'selected' : '' }}>
+    <option value="6" {{ $candidate['remark_id'] == 6 ? 'selected' : '' }}>
         Follow Up</option>
     <option value="2" {{ $candidate['remark_id'] == 2 ? 'selected' : '' }}>
         FAJ</option>
     <option value="3" {{ $candidate['remark_id'] == 3 ? 'selected' : '' }}>
         Not Suitable</option>
-    <option disabled {{ $candidate['remark_id'] == 4 ? 'selected' : '' }}>
+    <option value="4" class="assignInterview" data-cadidateId={{ $candidate->candidate_id }} {{ $candidate['remark_id'] == 4 ? 'selected' : '' }}>
         Interview</option>
     <option disabled {{ $candidate['remark_id'] == 5 ? 'selected' : '' }}>
         Send To</option>
