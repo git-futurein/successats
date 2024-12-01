@@ -21338,3 +21338,11 @@
 [stacktrace]
 #0 {main}
 "} 
+[2024-11-30 20:17:35] local.ERROR: Class App\Models\Admin contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (App\Models\Admin::getActivitylogOptions) {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Class App\\Models\\Admin contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (App\\Models\\Admin::getActivitylogOptions) at C:\\laragon\\www\\successats\\app\\Models\\Admin.php:13)
+[stacktrace]
+#0 {main}
+"} 
+[2024-11-30 20:18:35] local.ERROR: Class App\Models\Admin contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (App\Models\Admin::getActivitylogOptions) {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Class App\\Models\\Admin contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (App\\Models\\Admin::getActivitylogOptions) at C:\\laragon\\www\\successats\\app\\Models\\Admin.php:13)
+[stacktrace]
+#0 {main}
+"} 
