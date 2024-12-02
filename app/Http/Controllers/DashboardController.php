@@ -26,7 +26,7 @@ class DashboardController extends Controller
         {
             return redirect()->route('login');
         }
-        
+
         $auth = Auth::user()->employe;
         $managers = [];
         $candidatesByManager = [];
@@ -38,7 +38,8 @@ class DashboardController extends Controller
 
         $clients = client::latest()->get();
         $calander_datas = Calander::query();
-        $active_resume = Dashboard::with('candidate')->where('status', 0)->whereNot('remark_id',3)->whereNot('remark_id',2)->whereNot('remark_id',10)->whereNot('remark_id',8);
+        // $active_resume = Dashboard::with('candidate')->where('status', 0)->whereNot('remark_id',3)->whereNot('remark_id',2)->whereNot('remark_id',10)->whereNot('remark_id',8);
+        $active_resume = Dashboard::with('candidate')->where('status', 0)->where('remark_id',0);
         $shortlists = Dashboard::with('candidate')->where('status', 0)->where('remark_id', 99);
         $rework = Dashboard::with('candidate')->where('status', 0)->where('remark_id', 11);
         $followUp = Dashboard::with('candidate')->where('status', 0)->where('remark_id', 6)->where('follow_day', '>', 0);
