@@ -142,6 +142,12 @@
                                     @else
                                         <input type="hidden" name="assign_to" value="{{ $auth->id }}">
                                     @endif
+                                    <div class="row mb-4">
+                                        <label for="one" class="col-sm-4 col-form-label">Remarks</label>
+                                        <div class="col-sm-8 description_textarea">
+                                            <textarea name="remarks" id="ckeditor-classicss" class="editor " cols="41" rows="4"> {{ old('remarks') }} </textarea>
+                                        </div>
+                                    </div>
                                     <button type="submit" id="" class="btn btn-info btn-sm">Add to list</button>
                                 </form>
                             @endif
@@ -193,6 +199,12 @@
 @endsection
 
 @section('scripts')
+    <!-- ckeditor -->
+    <script src="{{ URL::asset('build/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+
+    <!-- init js -->
+
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
         integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     @include('admin.include.select2js')

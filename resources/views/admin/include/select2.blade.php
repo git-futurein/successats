@@ -26,5 +26,9 @@
     .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
         color: #545965 !important;
     }
+
+    .font-small{
+        font-size: 11px;
+    }
 </style>
 

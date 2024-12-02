@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Facades\Auth;
 
-class candidate extends Model
+class Candidate extends Model
 {
     use HasFactory;
 

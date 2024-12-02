@@ -10,7 +10,7 @@ use App\Models\AssignClient;
 use App\Models\AssignToRc;
 use App\Models\Calander;
 use App\Models\Callback;
-use App\Models\candidate;
+use App\Models\Candidate;
 use App\Models\CandidateFamily;
 use App\Models\CandidatePayroll;
 use App\Models\CandidateRemark;
@@ -20,23 +20,23 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Designation;
 use App\Models\Department;
-use App\Models\paymode;
+use App\Models\Paymode;
 use App\Models\Race;
-use App\Models\maritalStatus;
-use App\Models\passtype;
+use App\Models\MaritalStatus;
+use App\Models\Passtype;
 use App\Models\Religion;
-use App\Models\uploadfiletype;
+use App\Models\Uploadfiletype;
 use App\Models\ClientUploadFile;
 use App\Models\CandidateResume;
 use App\Models\CandidateWorkingHour;
-use App\Models\client;
-use App\Models\jobtype;
-use App\Models\country;
+use App\Models\Client;
+use App\Models\Jobtype;
+use App\Models\Country;
 use App\Models\Dashboard;
 use App\Models\Employee;
 use App\Models\Notification;
-use App\Models\outlet;
-use App\Models\remarkstype;
+use App\Models\Outlet;
+use App\Models\Remarkstype;
 use App\Models\User;
 use App\Models\Paybank;
 use App\Models\TimeSheet;
@@ -68,8 +68,8 @@ class CandidateController extends Controller
         }
 
         $auth = Auth::user()->employe;
-        // $datas = candidate::latest();
-        $datas = candidate::orderBy('id', 'desc');
+        // $datas = Candidate::latest();
+        $datas = Candidate::orderBy('id', 'desc');
 
         if ($auth->roles_id == 4) {
             $datas->where('manager_id', $auth->id);
@@ -96,14 +96,14 @@ class CandidateController extends Controller
 
         $department_data = Department::orderBy('department_seqno')->where('department_status', '1')->get();
         $designation_data = Designation::orderBy('designation_seqno')->where('designation_status', '1')->get();
-        $paymode_data = paymode::orderBy('paymode_seqno')->where('paymode_status', '1')->get();
+        $paymode_data = Paymode::orderBy('paymode_seqno')->where('paymode_status', '1')->get();
         $race_data = Race::orderBy('race_seqno')->where('race_status', '1')->get();
-        $marital_data = maritalStatus::orderBy('marital_statuses_seqno')->where('marital_statuses_status', '1')->get();
-        $passtype_data = passtype::orderBy('passtype_seqno')->where('passtype_status', '1')->get();
+        $marital_data = MaritalStatus::orderBy('marital_statuses_seqno')->where('marital_statuses_status', '1')->get();
+        $passtype_data = Passtype::orderBy('passtype_seqno')->where('passtype_status', '1')->get();
         $religion_data = religion::orderBy('religion_seqno')->where('religion_status', '1')->get();
-        $outlet_data = outlet::latest()->get();
-        $clients = client::latest()->get();
-        $nationality = country::orderBy('en_country_name')->get();
+        $outlet_data = Outlet::latest()->get();
+        $clients = Client::latest()->get();
+        $nationality = Country::orderBy('en_country_name')->get();
         $Paybanks = Paybank::orderBy('Paybank_seqno')->select('id', 'Paybank_code')->where('Paybank_status', 1)->get();
         return view('admin.candidate.create', compact('Paybanks', 'outlet_data', 'religion_data', 'passtype_data', 'marital_data', 'race_data', 'department_data', 'designation_data', 'paymode_data', 'nationality', 'clients'));
     }
@@ -273,26 +273,26 @@ class CandidateController extends Controller
         }
 
         if ($candidate->team_leader_id == $team_leader_id || $auth->roles_id == 1 || $auth->roles_id == 4) {
-            $fileTypes = uploadfiletype::where('uploadfiletype_status', 1)->where('uploadfiletype_for', 1)->latest()->get();
+            $fileTypes = Uploadfiletype::where('uploadfiletype_status', 1)->where('uploadfiletype_for', 1)->latest()->get();
             $department_data = Department::orderBy('department_seqno')->where('department_status', '1')->get();
             $designation_data = Designation::orderBy('designation_seqno')->where('designation_status', '1')->get();
-            $paymode_data = paymode::orderBy('paymode_seqno')->where('paymode_status', '1')->get();
+            $paymode_data = Paymode::orderBy('paymode_seqno')->where('paymode_status', '1')->get();
             $race_data = Race::orderBy('race_seqno')->where('race_status', '1')->get();
-            $marital_data = maritalStatus::orderBy('marital_statuses_seqno')->where('marital_statuses_status', '1')->get();
-            $passtype_data = passtype::orderBy('passtype_seqno')->where('passtype_status', '1')->get();
+            $marital_data = MaritalStatus::orderBy('marital_statuses_seqno')->where('marital_statuses_status', '1')->get();
+            $passtype_data = Passtype::orderBy('passtype_seqno')->where('passtype_status', '1')->get();
             $religion_data = religion::orderBy('religion_seqno')->where('religion_status', '1')->get();
-            $outlet_data = outlet::orderBy('id')->get();
+            $outlet_data = Outlet::orderBy('id')->get();
             $client_files = ClientUploadFile::where('client_id', $candidate->id)->where('file_type_for', 1)->get();
-            $remarks_type = remarkstype::where('remarkstype_status', 1)->select('id', 'remarkstype_code')->latest()->get();
+            $remarks_type = Remarkstype::where('remarkstype_status', 1)->select('id', 'remarkstype_code')->latest()->get();
             $client_remarks = CandidateRemark::with('candidate')->where('candidate_id', $candidate->id)->latest()->get();
 
-            $job_types = jobtype::where('jobtype_status', 1)->select('id', 'jobtype_code')->get();
-            $clients = client::where('clients_status', 1)->latest()->get();
+            $job_types = Jobtype::where('jobtype_status', 1)->select('id', 'jobtype_code')->get();
+            $clients = Client::where('clients_status', 1)->latest()->get();
             $payrolls = CandidatePayroll::where('candidate_id', $candidate->id)->latest()->get();
             $families = CandidateFamily::where('candidate_id', $candidate->id)->latest()->get();
             $time = CandidateWorkingHour::where('candidate_id', $candidate->id)->first();
             $candidate_resume = CandidateResume::where('candidate_id', $candidate->id)->latest()->get();
-            $nationality = country::orderBy('en_country_name')->get();
+            $nationality = Country::orderBy('en_country_name')->get();
             $users = Employee::where('roles_id', 4)->where('id', '!=', $auth->id)->latest()->get();
             $Paybanks = Paybank::orderBy('Paybank_seqno')->select('id', 'Paybank_code')->where('Paybank_status', 1)->get();
             $time_sheet = TimeSheet::latest()->get();
@@ -351,7 +351,7 @@ class CandidateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(candidate $candidate)
+    public function destroy(Candidate $candidate)
     {
         if (is_null($this->user) || !$this->user->can('candidate.destroy')) {
             abort(403, 'Unauthorized');
@@ -448,12 +448,12 @@ class CandidateController extends Controller
         $url = '/ATS/candidate/' . $id . '/edit#upload_resume';
 
         if ($file_path) {
-            $uploadedFilePath = FileHelper::uploadFile($file_path, 'candidate');
-            // $resumeName = preg_replace('/\s+/', '-', $request->resume_name);
-            // $filename = $resumeName. '.' .$file_path->getClientOriginalExtension();
-            // $path = 'uploads/candidate/';
-            // $file_path->move(public_path($path),$filename);
-            // $fullPath = $path.$filename;
+            // $uploadedFilePath = FileHelper::uploadFile($file_path, 'candidate');
+            $resumeName = preg_replace('/\s+/', '-', $request->resume_name);
+            $filename = $resumeName. '.' .$file_path->getClientOriginalExtension();
+            $path = 'uploads/candidate/';
+            $file_path->move(public_path('storage/'.$path),$filename);
+            $fullPath = $path.$filename;
 
 
 
@@ -468,7 +468,7 @@ class CandidateController extends Controller
             CandidateResume::create([
                 'candidate_id' => $id,
                 'resume_name' => $request->resume_name,
-                'resume_file_path' => $uploadedFilePath,
+                'resume_file_path' => $fullPath,
                 // 'resume_text' => $resume_text,
                 'isMain' => 1
             ]);
@@ -497,7 +497,7 @@ class CandidateController extends Controller
         return redirect()->route('candidate.edit', [$candidate->id, '#upload_resume'])->with('success', 'successfully Deleted.');
     }
 
-    public function resumeMain(Request $request, candidate $candidate)
+    public function resumeMain(Request $request, Candidate $candidate)
     {
         // return $candidate;
         // if (is_null($this->user) || !$this->user->can('candidate.resume.main')) {
@@ -543,7 +543,7 @@ class CandidateController extends Controller
 
         $validator->validated();
 
-        $candidate = candidate::find($id);
+        $candidate = Candidate::find($id);
 
         if(!$candidate) return redirect($url)->with('error', 'Candidate Not Found!!');
 
@@ -840,7 +840,7 @@ class CandidateController extends Controller
             }
 
             $dashboard->update($dashboard_data);
-            $candidate = candidate::find($id);
+            $candidate = Candidate::find($id);
             Assign::create([
                 'candidate_id' => $candidate->id,
                 'manager_id' => $request->Assign_to_manager ?? $candidate->manager_id,
@@ -976,25 +976,25 @@ class CandidateController extends Controller
         }
         $auth = Auth::user()->employe;
 
-        $fileTypes = uploadfiletype::where('uploadfiletype_status', 1)->where('uploadfiletype_for', 1)->latest()->get();
+        $fileTypes = Uploadfiletype::where('uploadfiletype_status', 1)->where('uploadfiletype_for', 1)->latest()->get();
         $department_data = Department::orderBy('department_seqno')->where('department_status', '1')->get();
         $designation_data = Designation::orderBy('designation_seqno')->where('designation_status', '1')->get();
-        $paymode_data = paymode::orderBy('paymode_seqno')->where('paymode_status', '1')->get();
+        $paymode_data = Paymode::orderBy('paymode_seqno')->where('paymode_status', '1')->get();
         $race_data = Race::orderBy('race_seqno')->where('race_status', '1')->get();
-        $marital_data = maritalStatus::orderBy('marital_statuses_seqno')->where('marital_statuses_status', '1')->get();
-        $passtype_data = passtype::orderBy('passtype_seqno')->where('passtype_status', '1')->get();
+        $marital_data = MaritalStatus::orderBy('marital_statuses_seqno')->where('marital_statuses_status', '1')->get();
+        $passtype_data = Passtype::orderBy('passtype_seqno')->where('passtype_status', '1')->get();
         $religion_data = religion::orderBy('religion_seqno')->where('religion_status', '1')->get();
-        $outlet_data = outlet::orderBy('id')->get();
+        $outlet_data = Outlet::orderBy('id')->get();
         $client_files = ClientUploadFile::where('client_id', $candidate->id)->where('file_type_for', 1)->get();
-        $remarks_type = remarkstype::where('remarkstype_status', 1)->select('id', 'remarkstype_code')->latest()->get();
+        $remarks_type = Remarkstype::where('remarkstype_status', 1)->select('id', 'remarkstype_code')->latest()->get();
         $client_remarks = CandidateRemark::where('candidate_id', $candidate->id)->latest()->get();
-        $job_types = jobtype::where('jobtype_status', 1)->select('id', 'jobtype_code')->get();
-        $clients = client::where('clients_status', 1)->latest()->get();
+        $job_types = Jobtype::where('jobtype_status', 1)->select('id', 'jobtype_code')->get();
+        $clients = Client::where('clients_status', 1)->latest()->get();
         $payrolls = CandidatePayroll::where('candidate_id', $candidate->id)->latest()->get();
         $families = CandidateFamily::where('candidate_id', $candidate->id)->latest()->get();
         $time = CandidateWorkingHour::where('candidate_id', $candidate->id)->first();
         $candidate_resume = CandidateResume::where('candidate_id', $candidate->id)->latest()->get();
-        $nationality = country::orderBy('en_country_name')->get();
+        $nationality = Country::orderBy('en_country_name')->get();
         $users = Employee::where('roles_id', 4)->where('id', '!=', $auth->id)->latest()->get();
         $Paybanks = Paybank::orderBy('Paybank_seqno')->select('id', 'Paybank_code')->where('Paybank_status', 1)->get();
         $time_sheet = TimeSheet::latest()->get();
@@ -1024,7 +1024,7 @@ class CandidateController extends Controller
         $validated = $validator->validated();
         $validated['modify_by'] = $auth->id;
 
-        $candidate = candidate::find($remark->candidate_id);
+        $candidate = Candidate::find($remark->candidate_id);
 
         if (!$candidate) return redirect($url)->with('error', 'Candidate Not Found!!');
 
@@ -1256,7 +1256,7 @@ class CandidateController extends Controller
 
             $dashboard->update($dashboard_data);
 
-            $candidate = candidate::find($remark->candidate_id);
+            $candidate = Candidate::find($remark->candidate_id);
             $assign = Assign::where('remark_id', $remark->id);
             $assign->update([
                 'candidate_id' => $candidate->id,

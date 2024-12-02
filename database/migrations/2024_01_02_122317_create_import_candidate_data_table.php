@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id');
             $table->string('resume_path');
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }

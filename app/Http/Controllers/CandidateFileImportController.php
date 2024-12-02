@@ -40,6 +40,7 @@ class CandidateFileImportController extends Controller
      */
     public function index(Request $request)
     {
+        // dd($request->all());
         // Check user authorization
         if (is_null($this->user) || !$this->user->can('import.index')) {
             abort(403, 'Unauthorized');
@@ -291,7 +292,7 @@ class CandidateFileImportController extends Controller
             $file = $request->selectedFile;
             $filePath = Storage::path('public/'.$file);
             $resume_text = '';
-        
+
             try {
                 if (pathinfo($file, PATHINFO_EXTENSION) === 'pdf') {
                     // Handle PDF file
@@ -300,7 +301,7 @@ class CandidateFileImportController extends Controller
                         $pdf = $parser->parseFile($filePath);
                         $resume_text = $pdf->getText();
                     }
-        
+
                 } elseif (pathinfo($file, PATHINFO_EXTENSION) === 'docx') {
                     // Handle DOCX file
                     if (file_exists($filePath)) {
@@ -313,7 +314,7 @@ class CandidateFileImportController extends Controller
                             }
                         }
                     }
-        
+
                 } elseif (pathinfo($file, PATHINFO_EXTENSION) === 'doc') {
                     // Handle DOC file (Use unoconv or a different library for DOC files)
                     // For example, using PHPWord for DOC files if needed.
@@ -327,7 +328,7 @@ class CandidateFileImportController extends Controller
                             }
                         }
                     }
-        
+
                 } elseif (pathinfo($file, PATHINFO_EXTENSION) === 'xls' || pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
                     // Handle Excel files
                     if (file_exists($filePath)) {
@@ -339,51 +340,51 @@ class CandidateFileImportController extends Controller
                             }
                         }
                     }
-        
+
                 } elseif (pathinfo($file, PATHINFO_EXTENSION) === 'txt') {
                     // Handle TXT files
                     if (file_exists($filePath)) {
                         $resume_text = file_get_contents($filePath);
                     }
                 }
-        
+
                 // Extract information from the text
                 if (preg_match('/\b(Name:|name:|Name\s*:|name\s*:|Mr\.|Mrs\.|Ms\.|Md\.|Dr\.|Mister|Miss)\s+([A-Za-z. ]+)/mi', $resume_text, $matches)) {
                     $name = trim($matches[2]);
                 } else {
                     $name = "Name not found";
                 }
-        
+
                 // Extract email
                 if (preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', $resume_text, $matches)) {
                     $email = trim($matches[0]);
                 } else {
                     $email = "Email not found";
                 }
-        
+
                 // Extract gender
                 if (preg_match('/\b(male|female)\b/i', $resume_text, $matches)) {
                     $gender = ucfirst(strtolower($matches[0]));
                 } else {
                     $gender  = "Gender not found!";
                 }
-        
+
                 // Extract phone number
                 if (preg_match('/\+?[0-9]{6,}/', $resume_text, $matches)) {
                     $phone_no = trim($matches[0]);
                 } else {
                     $phone_no = "Phone number not found";
                 }
-        
+
                 // Ensure that the user has permission to extract info
                 if (is_null($this->user) || !$this->user->can('extract.info')) {
                     abort(403, 'Unauthorized');
                 }
-        
+
                 $myPath = asset('storage/' . $file);
-        
+
                 return response()->json(compact('resume_text', 'name', 'email', 'phone_no', 'myPath', 'gender'));
-                
+
             } catch (\Exception $e) {
                 return response('Error processing the file: ' . $e->getMessage(), 500);
             }
@@ -409,11 +410,11 @@ class CandidateFileImportController extends Controller
             $deletePath = Str::after($selectedFile, 'uploads');
             $item->delete();
             $delete_path = 'app/public/uploads' . $deletePath;
-            
+
             if (file_exists(storage_path($delete_path))) {
                 unlink(storage_path($delete_path));
             }
-            
+
         }
 
         return redirect()->back()->with('success', 'Selected items deleted successfully.');
@@ -421,11 +422,7 @@ class CandidateFileImportController extends Controller
 
     public function temporaryDataSave(Request $request)
     {
-        // if (is_null($this->user) || !$this->user->can('temporary.data.save')) {
-        //     abort(403, 'Unauthorized');
-        // }
-        // return $request;
-
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -434,6 +431,7 @@ class CandidateFileImportController extends Controller
             'assign_to' => 'required|numeric|exists:employees,id',
             'resume_path' => 'required|string|max:255',
             'resume_text' => 'nullable|string',
+            'remarks' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -488,12 +486,13 @@ class CandidateFileImportController extends Controller
     }
     public function importCandidateData(Request $request)
     {
+        // dd($request->all());
+
         // if (is_null($this->user) || !$this->user->can('import.candidate.data')) {
         //     abort(403, 'Unauthorized');
         // }
 
         $temporaryData = json_decode($request->input('temporary_data'), true);
-
         DB::beginTransaction();
         try {
             foreach ($temporaryData['data'] as $data) {
@@ -512,7 +511,7 @@ class CandidateFileImportController extends Controller
 
                     CandidateRemark::create([
                         'candidate_id' => $candidate->id,
-                        'remarkstype_id' => 11,
+                        'remarkstype_id' => 3,
                         'isNotice' => 0,
                         'remarks' => 'Candidate generate from Import',
                     ]);

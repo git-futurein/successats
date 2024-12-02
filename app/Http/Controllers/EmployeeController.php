@@ -126,7 +126,9 @@ class EmployeeController extends Controller
      */
     public function store(StoreEmployeeRequest $request)
     {
-
+        $request->validate([
+            'employee_email' => 'required|unique:employees',
+        ]);
         if (is_null($this->user) || !$this->user->can('employee.store')) {
             abort(403, 'Unauthorized');
         }
@@ -167,6 +169,8 @@ class EmployeeController extends Controller
                 $user->google2fa_secret = $google2fa->generateSecretKey();
                 $user->save();
                 $this->sendResetEmail($user->email);
+
+
 
                 $role = Role::where('id', $request->roles_id)->first()->name;
                 if ($request->roles_id) {
@@ -259,17 +263,14 @@ class EmployeeController extends Controller
      */
     public function update(StoreEmployeeRequest $request, Employee $employee)
     {
-        return $request;
+
         if (is_null($this->user) || !$this->user->can('employee.update')) {
             abort(403, 'Unauthorized');
         }
+        $request->validate([
+            'employee_email' => 'required|email|unique:employees,employee_email,' . $employee->id .',id',
+        ]);
 
-        // if ($this->user->employe->roles_id == 4) {
-        //     $request['manager_users_id'] = $this->user->employe->id;
-        // } elseif ($this->user->employe->roles_id == 11) {
-        //     $request['team_leader_users_id'] = $this->user->employe->id;
-        //     $request['manager_users_id'] = $this->user->employe->manager_users_id;
-        // }
 
         if ($request->hasFile('employee_avater')) {
             // Delete the old file

@@ -1412,8 +1412,8 @@
                     let filePath = $(this).data('file-path');
                     const iframe = document.getElementById('pdfViewer');
                     if (filePath) {
-                        // let publicUrl = "{{ asset(Storage::url('')) }}" + "/" + filePath;
-                        let publicUrl = "{{ asset('') }}" + filePath;
+                        let publicUrl = "{{ asset(Storage::url('')) }}" + "/" + filePath;
+                        // let publicUrl = "{{ asset('') }}" + filePath;
 
                         // Check if the publicUrl exists
                         $.ajax({

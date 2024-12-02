@@ -52,7 +52,7 @@ class UserController extends Controller
     public function create(): View
     {
         $roles  = Role::all();
-        $employees = Employee::where('employee_status', 1)->where('employee_isDeleted', 0)->get();
+        $employees = Employee::where('employee_status', 1)->where('employee_isDeleted', 0)->where('active_status',1)->get();
         return view('admin.users.create', compact('roles', 'employees'));
     }
     /**
@@ -78,7 +78,6 @@ class UserController extends Controller
 
     public function registration(Request $request)
     {
-
         // Create New User
         $user = new User();
         $user->name = $request->name;
@@ -89,6 +88,13 @@ class UserController extends Controller
 
         if ($request->roles) {
             $user->assignRole($request->roles);
+        }
+
+        //added later 02/12/24
+        $employee = Employee::where('employee_email', $request->email)->first();
+        if($employee){
+            $employee->user_table_id = $user->id;
+            $employee->save();
         }
 
         if ($this->sendResetEmail($request->email)) {
@@ -122,7 +128,7 @@ class UserController extends Controller
     }
     public function store(StoreUserRequest $request)
     {
-
+        // dd($request->all());
         // Validation Data
         $request->validate([
             'name' => 'required|max:50',

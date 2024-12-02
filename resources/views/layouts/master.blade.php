@@ -50,9 +50,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
-    document.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-    });
+    // document.addEventListener('contextmenu', function(event) {
+    //     event.preventDefault();
+    // });
 
     // $(document).ready(function() {
     //     $('.notification-item').click(function(event) {

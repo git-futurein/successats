@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone_no');
             $table->string('resume_path');
+            $table->text('remarks')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('modify_by')->nullable();
             $table->timestamps();

@@ -21,14 +21,13 @@ class StoreEmployeeRequest extends FormRequest
      */
     public function rules(): array
     {
-        
+
         return [
             'reg_no' => 'nullable|string',
             'employee_outlet_id' => 'integer',
             'employee_code' => 'nullable',
             'employee_name' => 'nullable',
             'employee_phone' => 'nullable',
-            'employee_email' => 'required|unique:employee,employees,except,id,'.$id,
             'passtypes_id' => 'nullable',
             'employee_nric' => 'nullable',
             'employee_mobile' => 'nullable',

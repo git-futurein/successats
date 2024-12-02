@@ -154,8 +154,7 @@
                                                 <div class="row col-md-6 col-lg-6 mb-1">
                                                     <label for="teamLeaderSelect"
                                                         class="col-sm-5 col-form-label fw-bold">Team
-                                                        Leader<span
-                                                        class="text-danger">*</span></label>
+                                                        Leader</label>
                                                     <div class="col-sm-7">
                                                         <select name="team_leader_id" id="teamLeaderSelect"
                                                             class="form-control single-select-field">
@@ -167,14 +166,13 @@
                                             @if ($auth->roles_id == 1 || $auth->roles_id == 4 || $auth->roles_id == 11)
                                                 <div class="row col-md-6 col-lg-6 mb-1">
                                                     <label for="consultantSelect"
-                                                        class="col-sm-5 col-form-label fw-bold">Consultant<span
-                                                        class="text-danger">*</span></label>
+                                                        class="col-sm-5 col-form-label fw-bold">Consultant</label>
                                                     <div class="col-sm-7">
                                                         <select id="consultantSelect"
                                                             class="form-control single-select-field" name="consultant_id">
                                                             <option value="" selected disabled>Select One </option>
                                                             @foreach($consultants as $consultant)
-                                                                
+
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -375,8 +373,8 @@
                                         <div class="col-lg-3">
                                             @if ($candidate->avatar)
                                                 <img width="200" class="img-fluid img-thumbnail"
-                                                    {{-- src="{{ asset('storage') }}/{{ $candidate->avatar }}" alt="avatar" --}}
-                                                    src="{{ asset( $candidate->avatar) }}" alt="avatar"
+                                                    src="{{ asset('storage') }}/{{ $candidate->avatar }}" alt="avatar"
+                                                    {{-- src="{{ asset( $candidate->avatar) }}" alt="avatar" --}}
                                                     id="avatar-preview">
                                             @else
                                                 <img width="200" src="{{ URL::asset('build/images/avatar.png') }}"
@@ -386,8 +384,86 @@
                                                 accept="images">
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    {{-- <div class="row">
                                         <div class="col-sm-9 my-3">
+                                            <div>
+                                                <a href="{{ route('candidate.index') }}"
+                                                    class="btn btn-sm btn-secondary w-md">Back</a>
+                                                <button type="submit" class="btn btn-sm btn-info w-md">Submit</button>
+                                                <a href="#" class="btn btn-sm btn-warning w-md">Print</a>
+                                            </div>
+                                        </div>
+                                    </div> --}}
+
+                                    <hr>
+                                    <div class="tab-pane mt-4" id="contact_info" role="tabpanel">
+                                        {{-- <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PATCH') --}}
+
+                                            <div class="row">
+                                                <h5>Emergency Contact Address Information</h5>
+                                                <div class="col-lg-6">
+                                                    <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                        <div class="row mb-1">
+                                                            <label for="one" class="col-sm-3 col-form-label">Contact
+                                                                Person</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="candidate_emr_contact"
+                                                                    class="form-control" placeholder="Contact Person"
+                                                                    value="{{ $candidate->candidate_emr_contact }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-1">
+                                                            <label for="one" class="col-sm-3 col-form-label">Phone 1</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="candidate_emr_phone1"
+                                                                    class="form-control" placeholder="Phone 1"
+                                                                    value="{{ $candidate->candidate_emr_phone1 }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-1">
+                                                            <label for="four" class="col-sm-3 col-form-label">Address</label>
+                                                            <div class="col-sm-9">
+                                                                <textarea name="candidate_emr_address" rows="2" class="form-control" placeholder="Address"> {{ $candidate->candidate_emr_address }} </textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="mt-5 mt-lg-4 mt-xl-0">
+                                                        <div class="row mb-1">
+                                                            <label for="one"
+                                                                class="col-sm-3 col-form-label">Relationship</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="candidate_emr_relation"
+                                                                    class="form-control" placeholder="Relationship"
+                                                                    value="{{ $candidate->candidate_emr_relation }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-1">
+                                                            <label for="one" class="col-sm-3 col-form-label">Phone 2</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="candidate_emr_phone2"
+                                                                    class="form-control" placeholder="Phone 2"
+                                                                    value="{{ $candidate->candidate_emr_phone2 }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-1 ">
+                                                            <label for="four" class="col-sm-3 col-form-label">Remarks</label>
+                                                            <div class="col-sm-9">
+                                                                <textarea name="candidate_emr_remarks" rows="2" class="form-control" placeholder="Remarks" required> {{ $candidate->candidate_emr_remarks }} </textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+{{--
+                                        </form> --}}
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-9 ms-3 mb-3">
                                             <div>
                                                 <a href="{{ route('candidate.index') }}"
                                                     class="btn btn-sm btn-secondary w-md">Back</a>
@@ -397,83 +473,6 @@
                                         </div>
                                     </div>
                                 </form>
-                                <hr>
-                                <div class="tab-pane mt-4" id="contact_info" role="tabpanel">
-                                    <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        @method('PATCH')
-
-                                        <div class="row">
-                                            <h5>Emergency Contact Address Information</h5>
-                                            <div class="col-lg-6">
-                                                <div class="mt-5 mt-lg-4 mt-xl-0">
-                                                    <div class="row mb-1">
-                                                        <label for="one" class="col-sm-3 col-form-label">Contact
-                                                            Person</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="candidate_emr_contact"
-                                                                class="form-control" placeholder="Contact Person"
-                                                                value="{{ $candidate->candidate_emr_contact }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-1">
-                                                        <label for="one" class="col-sm-3 col-form-label">Phone 1</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="candidate_emr_phone1"
-                                                                class="form-control" placeholder="Phone 1"
-                                                                value="{{ $candidate->candidate_emr_phone1 }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-1">
-                                                        <label for="four" class="col-sm-3 col-form-label">Address</label>
-                                                        <div class="col-sm-9">
-                                                            <textarea name="candidate_emr_address" rows="2" class="form-control" placeholder="Address"> {{ $candidate->candidate_emr_address }} </textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="mt-5 mt-lg-4 mt-xl-0">
-                                                    <div class="row mb-1">
-                                                        <label for="one"
-                                                            class="col-sm-3 col-form-label">Relationship</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="candidate_emr_relation"
-                                                                class="form-control" placeholder="Relationship"
-                                                                value="{{ $candidate->candidate_emr_relation }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-1">
-                                                        <label for="one" class="col-sm-3 col-form-label">Phone 2</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="candidate_emr_phone2"
-                                                                class="form-control" placeholder="Phone 2"
-                                                                value="{{ $candidate->candidate_emr_phone2 }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-1 ">
-                                                        <label for="four" class="col-sm-3 col-form-label">Remarks<span
-                                                            class="text-danger">*</span></label>
-                                                        <div class="col-sm-9">
-                                                            <textarea name="candidate_emr_remarks" rows="2" class="form-control" placeholder="Remarks" required> {{ $candidate->candidate_emr_remarks }} </textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-9 ms-3 mb-3">
-                                                <div>
-                                                    <a href="{{ route('candidate.index') }}"
-                                                        class="btn btn-sm btn-secondary w-md">Back</a>
-                                                    <button type="submit" class="btn btn-sm btn-info w-md">Submit</button>
-                                                    <a href="#" class="btn btn-sm btn-warning w-md">Print</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
                             </div>
                             {{-- <div class="tab-pane" id="contact_info" role="tabpanel">
                                 <form action="{{ route('candidate.update', $candidate->id) }}" method="POST"
@@ -1895,7 +1894,7 @@
                                                     <label for="remarks" class="col-sm-12 col-md-1 col-form-label fw-bold">Remarks <span class="text-danger">*</span></label>
                                                     <div class="col-sm-12 col-md-11">
                                                         <div class="d-flex flex-row-reverse description_textarea">
-                                                            <textarea name="remarks" id="ckeditor-classic" class="editor " rows="2"> {{ old('remarks') }} </textarea>
+                                                            <textarea name="remarks" id="ckeditor-classic" class="editor" rows="2"> {{ old('remarks') }} </textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1927,7 +1926,7 @@
                                                         <td>{{ $loop->index + 1 }}</td>
                                                         <td>{{ $remark->candidate?->candidate_name }}</td>
                                                         <td>{{ $remark->assignTo?->employee_name }}</td>
-                                                        <td>{{ $remark->client?->client_name ?? $remark->assign_client?->client?->client_name  }}</td>
+                                                        <td class="text-center">{{ $remark->client?->client_name ?? $remark->assign_client?->client?->client_name ?? '--'  }}</td>
                                                         <td>{{ $remark->remarksType->remarkstype_code }}</td>
                                                         <td>{!! $remark->remarks !!}</td>
                                                         <td>{{ $remark->Assign->name }}</td>
@@ -2504,7 +2503,7 @@
                                         <div class="mt-5 mt-lg-4 mt-xl-0">
                                             <div class="row mb-1">
                                                 <label for="file_path" class="col-sm-3 col-form-label">Upload
-                                                    File (<span class="text-danger">Pdf,Doc,Docx,Jpg,Jpeg,Png</span>)(Max size : 2MB)</label>
+                                                    File (<span class="text-danger font-small">Pdf,Doc,Docx,Jpg,Png</span>)(<span class="font-small text-danger">Max size : 2MB</span>)</label>
                                                 <div class="col-sm-9">
                                                     <input type="file" name="file_path"  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"  class="form-control">
                                                 </div>
