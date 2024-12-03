@@ -1909,7 +1909,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
-                                                    <th>Name</th>
+                                                    <th>Candidate Name</th>
                                                     <th>Assign</th>
                                                     <th>Client</th>
                                                     <th>Remarks Type</th>

@@ -26,7 +26,7 @@ class RemarksTypesController extends Controller
         if (is_null($this->user) || !$this->user->can('remarks-type.index')) {
             abort(403, 'Unauthorized');
         }
-        $datas = remarkstype::latest()->get();
+        $datas = remarkstype::where('remarkstype_status',1)->latest()->get();
         return view('admin.remarkType.index', compact('datas'));
     }
 

@@ -1,6 +1,6 @@
-<select class="form-select me-2 single-select-field" id="followUpStatusChange_{{ $candidate['id'] }}" style="width: 145px"
+<select class="form-select me-2 single-select-field remarkSelector" id="followUpStatusChange_{{ $candidate['id'] }}" style="width: 145px"
     aria-label="Default select example">
-    <option disabled {{ $candidate['remark_id'] == 0 ? 'selected' : '' }}>
+    <option value="0" {{ $candidate['remark_id'] == 0 ? 'selected' : '' }}>
         Active Resume</option>
     <option value="6" {{ $candidate['remark_id'] == 6 ? 'selected' : '' }}>
         Follow Up</option>
@@ -8,9 +8,9 @@
         FAJ</option>
     <option value="3" {{ $candidate['remark_id'] == 3 ? 'selected' : '' }}>
         Not Suitable</option>
-    <option value="4" class="assignInterview" data-cadidateId={{ $candidate->candidate_id }} {{ $candidate['remark_id'] == 4 ? 'selected' : '' }}>
+    <option value="4" {{ $candidate['remark_id'] == 4 ? 'selected' : '' }}>
         Interview</option>
-    <option disabled {{ $candidate['remark_id'] == 5 ? 'selected' : '' }}>
+    <option value="5" {{ $candidate['remark_id'] == 5 ? 'selected' : '' }}>
         Send To</option>
     <option value="7" {{ $candidate['remark_id'] == 7 ? 'selected' : '' }}>
         KIV</option>

@@ -3,19 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CalanderStatus;
+use App\Models\Assign;
 use App\Models\Calander;
+use App\Models\Callback;
+use App\Models\Candidate;
 use App\Models\CandidateRemark;
+use App\Models\CandidateRemarkInterview;
 use App\Models\client;
 use App\Models\Dashboard;
 use App\Models\Employee;
+use App\Models\Jobtype;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -36,7 +43,11 @@ class DashboardController extends Controller
         $candidatesByTeam = [];
         $own_manager = [];
 
+        $users = Employee::where('roles_id', 4)->where('id', '!=', $auth->id)->latest()->get();
         $clients = client::latest()->get();
+        $job_types = Jobtype::where('jobtype_status', 1)->select('id', 'jobtype_code')->get();
+
+
         $calander_datas = Calander::query();
         // $active_resume = Dashboard::with('candidate')->where('status', 0)->whereNot('remark_id',3)->whereNot('remark_id',2)->whereNot('remark_id',10)->whereNot('remark_id',8);
         $active_resume = Dashboard::with('candidate')->where('status', 0)->where('remark_id',0);
@@ -269,52 +280,269 @@ class DashboardController extends Controller
             'own_manager',
             'interviewData',
             'threedaynoaction',
-            'clients'
+            'clients',
+            'users',
+            'job_types',
         ));
     }
 
-    public function change_dashboard_remark(Dashboard $dashboard, $id)
+    public function change_dashboard_remark(Dashboard $dashboard, $remarkId)
     {
-        // dd($dashboard);
-        $follow_day = 0;
-        if($id == 6)
-        {
-            $follow_day = ++$dashboard->follow_day;
-        }
+        $candidateId = $dashboard->candidate_id;
+        $candidate = Candidate::find($candidateId);
+        if(!$candidate) return redirect()->back()->with('error', 'Candidate Not Found!!');
 
-        //check for switch interview tab, is the required data are available in database
-        if($id == 4){
-            $candidateId    = $dashboard->candidate_id;
-            $currentDate    = date('Y-m-d');
-            $interviewDate  = CandidateRemark::withWhereHas('interview',function($query) use ($currentDate){
-                                $query->where('interview_date', '>=', $currentDate);
-                            })->where('candidate_id',$candidateId)
-                            ->where('remarkstype_id',5) //in candidate_remarks table for interview the remark type id is 5
-                            ->exists();
+        try {
+            DB::beginTransaction();
+            $auth = Auth::user()->employe;
 
-            if(!$interviewDate){
-                // // session not working here
-                // Cache::forget('emptyInterview');
-                // Cache::put('emptyInterview', "no interview set");
-
-                // return redirect()->back()->with('candidateId',  $candidateId );
-                return redirect()->to('/ATS/candidate/' . $candidateId . '/edit#remark')->with('success','Interview Not Assigned! Please give interview details');
-
+            //update callback table
+            $callback = Callback::where('candidate_id', $candidate->id)->where('status', 5)->first();
+            if($callback) {
+                $callback->update(['status', 6]);
             }
+
+            //create remark
+            $candidate_remark               = new CandidateRemark();
+            $candidate_remark->candidate_id = $candidate->id;
+            $candidate_remark->ar_no        = 0;
+            $candidate_remark->assign_to    = 0;
+            $candidate_remark->created_by   = $auth->id;
+            $dashboard_data['callback'] = ++$dashboard->callback;
+
+            //active resume
+            if ($remarkId == 0) {
+                $candidate_remark->remarkstype_id   = 24;
+                $candidate_remark->remarks          = 'Transition to Active Resume';
+            }
+
+            //faj
+            if ($remarkId == 2) {
+                $candidate_remark->remarkstype_id   = 25;
+                $candidate_remark->remarks          = 'Transition to FAJ';
+            }
+
+            // Not Suitable
+            if ($remarkId == 3) {
+                $candidate_remark->remarkstype_id   = 26;
+                $candidate_remark->remarks          = 'Transition to  Not Suitable';
+            }
+
+            //KIV
+            if ($remarkId == 7) {
+                $candidate_remark->remarkstype_id   = 27;
+                $candidate_remark->remarks          = 'Transition to KIV';
+            }
+
+            //Drop
+            if ($remarkId == 10) {
+                $candidate_remark->remarkstype_id   = 28;
+                $candidate_remark->remarks          = 'Transition to Drop';
+            }
+
+            //Blacklist
+            if ($remarkId == 8) {
+                $candidate_remark->remarkstype_id   = 29;
+                $candidate_remark->remarks          = 'Transition to Blacklist';
+            }
+
+            //save  remark
+            $candidate_remark->save();
+
+            $dashboard_data = [];
+            $assign_dashboard_remark = assign_dashboard_remark_id($remarkId);
+            $dashboard_data['candidate_remark_id']  = $candidate_remark->id;
+            $dashboard_data['remark_id']            = $remarkId;
+            $dashboard_data['follow_day']           = $assign_dashboard_remark['follow_day'];
+            $dashboard_data['callback']             = $assign_dashboard_remark['callback'];
+
+            $dashboard->update($dashboard_data);
+            $candidate = Candidate::find($candidateId);
+            Assign::create([
+                'candidate_id' => $candidate->id,
+                'manager_id' => $request->Assign_to_manager ?? $candidate->manager_id,
+                'teamleader_id' => $candidate->team_leader_id ?? null,
+                'consultent_id' => $candidate->consultant_id ?? null,
+                'insert_by' => Auth::user()->id,
+                'remark_id' => $candidate_remark->id,
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Remark added successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    //candidate remark
+    public function candidateRemark(Dashboard $dashboard){
+        $candidateId = $dashboard->candidate_id;
+        $candidateData = Candidate::where('id',$candidateId)->first(['candidate_name','candidate_nric']);
+        $candidate_remarks = CandidateRemark::with('candidate','assignTo','client','assign_client','remarksType','Assign')->where('candidate_id',$candidateId)->latest()->get();
+
+        return response()->json([
+            'candidateData'     => $candidateData,
+            'candidate_remarks' => $candidate_remarks,
+        ]);
+    }
+
+    //dashboard candidate remarks
+    public function DashboardCandidateRemark(Request $request){
+        $dashboard  = Dashboard::where('id',$request->dashboardId)->first();
+        $candidateId    = $dashboard->candidate_id;
+
+        $validator = Validator::make($request->all(), [
+            'candidate_id'          => 'required|integer',
+            'remarkstype_id'        => 'required|integer',
+            'isNotice'              => 'nullable',
+            'remarks'               => 'required',
+            'callbackDate'          => 'required_if:remarkstype_id,22',
+            'callbackTime'          => 'required_if:remarkstype_id,22',
+            'shortlistPlacement'    => 'nullable|numeric',
+            'remarks'               => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            $errorMessage = $validator->errors()->first('candidate_id');
+            return redirect()->back()
+                ->with('error', $errorMessage)
+                ->withInput();
         }
 
-        $dashboard = $dashboard->update(['remark_id' => $id, 'follow_day' => $follow_day]);
+        $validator->validated();
 
-        if (!$dashboard) {
-            return redirect()->back()->with('error', 'Something Is Wrong!! Try Again.');
+        $candidate = Candidate::find($candidateId);
+
+        if(!$candidate) return redirect()->back()->with('error', 'Candidate Not Found!!');
+
+        // $dashboard = Dashboard::where('candidate_id', $request->candidate_id)->first();
+
+        try {
+            $assign_to = $request->Assign_to_manager ?? $request->Assign_to_manager_r ?? $request->team_leader ?? $request->rc ?? $request->team_leader ?? 0;
+            $client_company = $request->client_company ?? $request->client_company_s ?? $request->interview_company;
+
+            // Begin a transaction
+            DB::beginTransaction();
+            $auth = Auth::user()->employe;
+            $candidate_remark = CandidateRemark::create([
+                'candidate_id' => $candidate->id,
+                'remarkstype_id' => $request->remarkstype_id,
+                'isNotice' => $request->isNotice,
+                'remarks' => $request->remarks,
+                'ar_no' => $request->client_ar_no,
+                'assign_to' => $assign_to,
+                'client_company' => $client_company,
+                'created_by' => $auth->id
+            ]);
+
+            $callback = Callback::where('candidate_id', $candidate->id)->where('status', 5)->first();
+            if($callback) {
+                $callback->update(['status', 6]);
+            }
+
+            $dashboard_data = [];
+            $assign_dashboard_remark = assign_dashboard_remark_id($request->remarkstype_id);
+            $dashboard_data['candidate_remark_id'] = $candidate_remark->id;
+            $dashboard_data['remark_id'] = $assign_dashboard_remark['remark_id'];
+            $dashboard_data['follow_day'] = $assign_dashboard_remark['follow_day'];
+            $dashboard_data['callback'] = $assign_dashboard_remark['callback'];
+            $dashboard_data['client_company'] = $client_company;
+
+            $calander = [
+                'manager_id' => $candidate->manager_id,
+                'teamleader_id' => $candidate->team_leader_id,
+                'consultant_id' => $candidate->consultant_id,
+                'candidate_remark_id' => $candidate_remark->id,
+            ];
+
+            if ($request->remarkstype_id == 4) {
+                $dashboard_data['follow_day'] = ++$dashboard->follow_day;
+            }
+
+            if ($request->remarkstype_id == 12)
+            {
+                $team = get_team($request->Assign_to_manager);
+                $request->Assign_to_manager = $team['manager_id'];
+                $candidate->update([
+                    'manager_id' => $team['manager_id'],
+                    'team_leader_id' => $team['team_leader_id'],
+                    'consultant_id' => $team['consultant_id'],
+                ]);
+
+                $dashboard_data['manager_id'] = $team['manager_id'];
+                $dashboard_data['teamleader_id'] = $team['team_leader_id'];
+                $dashboard_data['consultent_id'] = $team['consultant_id'];
+            }
+
+            if ($request->remarkstype_id == 5) {
+                $list = CandidateRemarkInterview::create([
+                    'candidate_remark_id' => $candidate_remark->id,
+                    'interview_date' => $request->interview_date,
+                    'interview_time' => $request->interview_time,
+                    'interview_by' => $request->interview_by,
+                    'interview_position' => $request->interview_position,
+                    'interview_company' => $request->interview_company,
+                    'expected_salary' => $request->interview_expected_salary,
+                    'job_offer_salary' => $request->inteview_job_offer_salary,
+                    'available_date' => $request->available_date,
+                    'receive_job_offer' => $request->interview_received_job_offer,
+                    'email_notice_date' => $request->interviewEmailNoticeDate,
+                    'attend_interview' => $request->attendInterview,
+                ]);
+
+                $calander['candidate_remark_shortlist_id'] = $list->id;
+                $calander['title'] = Carbon::parse($list->interview_time)->format('h:i A') . '-' . $candidate->consultant?->employee_code .' - Interview -'. $list->company->client_name. ' - ' .$candidate->candidate_name;
+                $calander['date'] = $calander['new_date'] = $list->interview_date;
+                $calander['time'] = $list->interview_time;
+                $calander['status'] = 5;
+                $calander['candidate_id'] = $candidate->id;
+                $calander['title'] = 'Interview';
+                Callback::create($calander);
+
+                $userIds = array_filter([
+                    1,
+                    $candidate->manager_id,
+                    $candidate->team_leader_id,
+                    $candidate->consultant_id
+                ]);
+
+                if (!empty($userIds)) {
+                    $users = Employee::whereIn('id', $userIds)
+                        ->where('active_status', 1)
+                        ->get();
+                    $record = $calander;
+                    foreach ($users as $user) {
+                        try {
+                            $user->notify(new \App\Notifications\DateUpdatedNotification($record));
+                        } catch (\Exception $e) {
+                            Log::error('Error sending test notification', [
+                                'user_id' => $user->id,
+                                'error' => $e->getMessage(),
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            $dashboard->update($dashboard_data);
+            $candidate = Candidate::find($candidateId);
+            Assign::create([
+                'candidate_id' => $candidate->id,
+                'manager_id' => $request->Assign_to_manager ?? $candidate->manager_id,
+                'teamleader_id' => $candidate->team_leader_id ?? null,
+                'consultent_id' => $candidate->consultant_id ?? null,
+                'insert_by' => Auth::user()->id,
+                'remark_id' => $candidate_remark->id,
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Remark added successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        return redirect()->back()->with('success', 'Follow Up changed successfully.');
     }
 
 
-    //interview assign
-    public function interviewAssign(Request $request, $id){
-        dd($request->all(),$id);
-    }
 }

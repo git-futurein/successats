@@ -1251,8 +1251,7 @@
 
         @include('admin.candidate.inc.resume__modal')
         <!--Interview modal-->
-        @include('admin.dashboard.inc.interviewDataModal')
-
+        @include('admin.dashboard.inc.remarkSwiceModal')
 
 
         @if(Cache::get('emptyInterview'))
@@ -1269,20 +1268,24 @@
             </script>
         @endif
 
-
-
-
-
     @endsection
+
     @section('scripts')
         <link rel="stylesheet" type="text/css"
             href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
-
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/moment.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.js"></script>
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
         <script src="{{ URL::asset('build/libs/fullcalendar/main.min.js') }}"></script>
-        {{-- <script src="{{ URL::asset('build/js/pages/calendar.init.js') }}"></script> --}}
+
+
+        <!-- ckeditor -->
+        <script src="{{ URL::asset('build/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
+        <!-- init js -->
+        <script src="{{ URL::asset('build/js/pages/form-editor.init.js') }}"></script>
+        <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+
+
         <script>
             // Get all accordion items
             const accordionItems = document.querySelectorAll('.accordion-item');
@@ -1359,7 +1362,6 @@
                             type: 'GET',
                             url: '/ATS/get/candidate/remarks/' + candidate_id,
                             success: function(response) {
-                                console.log(response);
                                 let resumeTable = document.getElementById('resumeTable');
 
                                 if (resumeTable.style.display === 'none') {
@@ -1464,20 +1466,102 @@
             }
 
             $(document).ready(function() {
-                $('select.form-select').change(function() {
-
+                $('.remarkSelector').on('change',function(){
                     var dashboardId = $(this).attr('id').split('_')[1];
                     var remarkId = $(this).val();
                     var confirmed = confirm('Are you sure you want to change?');
 
-
                     if (confirmed) {
+                        if(remarkId == 4 || remarkId == 5 || remarkId == 6){
+                            console.log(remarkId);
 
-                        var redirectUrl = 'change/dashboard/remark/' + dashboardId + '/' + remarkId;
-                        window.location.href = redirectUrl;
+                            $.ajax({
+                                url: "{{ route('get.candidate.remark', ':dashboard') }}".replace(':dashboard', dashboardId),
+                                type: "GET",
+                                success: function(response) {
+                                    if (response.candidate_remarks) {
+                                        populateRemarksTable(response.candidate_remarks);
+                                    }
+
+                                    $('#candidate_name').empty();
+                                    $('#candidate_nric').empty();
+                                    $('#remarkId').val('');
+                                    $('#dashboardId').val('');
+
+                                    $('#remarkId').val(remarkId);
+                                    $('#dashboardId').val(dashboardId);
+                                    $('#candidate_name').html(response.candidateData['candidate_name']);
+                                    $('#candidate_nric').html(response.candidateData['candidate_nric']);
+
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("Error:", error);
+                                }
+                            });
+
+                            if(remarkId == 4){
+                                $('#remark_type_test').val(5).change();
+                            }
+                            if(remarkId == 5){
+                                $('#remark_type_test').val(12).change();
+                            }
+                            if(remarkId == 6){
+                                $('#remark_type_test').val(4).change();
+                            }
+
+                            $('#remarkSwiceModal').modal('show');
+                        }else{
+                            var redirectUrl = 'change/dashboard/remark/' + dashboardId + '/' + remarkId;
+                            window.location.href = redirectUrl;
+                        }
                     }
                 });
+
+
+                //addisonal functions
+                function populateRemarksTable(data) {
+                const tableBody = $('#CandidateRemarks');
+                tableBody.empty();
+
+                data.forEach((remark, index) => {
+                    const row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${remark.candidate.candidate_name || '--'}</td>
+                            <td>${remark.assign_to?.employee_name || '--'}</td>
+                            <td class="text-center">${remark.client?.client_name || '--'}</td>
+                            <td>${remark.remarks_type?.remarkstype_code || '--'}</td>
+                            <td>${remark.remarks || '--'}</td>
+                            <td>${remark.assign?.name || '--'}</td>
+                            <td>${new Date(remark.created_at).toLocaleTimeString()}</td>
+                            <td>${new Date(remark.created_at).toLocaleDateString()}</td>
+                        </tr>
+                        `;
+                        tableBody.append(row);
+                    });
+                }
+
+                function isEditDisabled(remark) {
+                    const roles_id = {{ $auth->roles_id }};
+                    console.log(roles_id);
+
+                    const allowedTypes = {
+                        1: true,
+                        4: [2, 12, 3],
+                        8: [11, 3],
+                        11: [11, 3]
+                    };
+                    const alwaysAllowedTypes = [4, 5, 6, 7, 22];
+
+                    if (roles_id === 1) return false;
+                    if (allowedTypes[roles_id]?.includes(remark.type)) return false;
+                    if (alwaysAllowedTypes.includes(remark.type)) return false;
+                    return true;
+                }
             });
+
+
+
 
             function changeRemarkBlock(dashboard) {
                 let remarkId = 8;
@@ -1486,10 +1570,291 @@
                     window.location.href = '/ATS/change/dashboard/remark/' + dashboard + '/' + remarkId;
                 }
             }
-
         </script>
 
+        <!-- dashboard remark swice js -->
         <script>
+            $(document).ready(function() {
+                $('body').on('change', '#remark_type_test', function() {
+                    var selectedValue = $(this).val();
+                    if (selectedValue === '9') {
+                        $('#reassign').show();
+                    } else {
+                        $('#reassign').hide();
+                    }
+                    if (selectedValue === '12' || selectedValue === '1') {
+                        $('#AssignToManager').show();
+                    } else {
+                        $('#AssignToManager').hide();
+                    }
+
+                    if (selectedValue === '2') {
+                        $('#AssignToTeamLeader').show().css('display', 'show');
+                        $.ajax({
+                            type: 'GET',
+                            url: '/ATS/get/candidate/teamleader',
+                            success: function(response) {
+                                console.log(response);
+                                let selectElement = $('#team_leader_option');
+                                selectElement.empty();
+
+                                $.each(response.teamleader, function(index, item) {
+                                    var option = $('<option>', {
+                                        value: item.id,
+                                        text: item.employee_name
+                                    });
+                                    selectElement.append(option);
+                                });
+                            },
+                        });
+                    } else {
+                        $('#AssignToTeamLeader').hide().css('display', 'none');
+                    }
+
+                    if (selectedValue === '3') {
+                        $('#AssignToRC').show().css('display', 'show');
+                        $.ajax({
+                            type: 'GET',
+                            url: '/ATS/get/candidate/rc',
+                            success: function(response) {
+                                console.log(response);
+                                let selectElement = $('#selected_rc');
+                                selectElement.empty();
+
+                                $.each(response.rc, function(index, item) {
+                                    var option = $('<option>', {
+                                        value: item.id,
+                                        text: item.employee_name
+                                    });
+                                    selectElement.append(option);
+                                });
+                            },
+                        });
+                    } else {
+                        $('#AssignToRC').hide().css('display', 'none');
+                    }
+
+                    if (selectedValue === '22') {
+                        $('#callbackDate').show().css('display', 'show');
+                        $('#callbackDate').prop('required', true);
+                        $('#callbackTime').show().css('display', 'show');
+                        $('#callbackTime').prop('required', true);
+                    } else {
+                        $('#callbackDate').show().hide().css('display', 'none');
+                        $('#callbackDate').prop('required', false);
+                        $('#callbackTime').show().hide().css('display', 'none');
+                        $('#callbackTime').prop('required', false);
+                    }
+
+                    if (selectedValue === '5') {
+                        $('#interviewTime').show().css('display', 'show');
+                        $('#interviewCompany').show().css('display', 'show');
+                        $('#interview_company').prop('required', true);
+                        $('#expectedSalary').show().css('display', 'show');
+                        $('#interviewPosition').show().css('display', 'show');
+                        $('#interview_position').prop('required', true);
+                        $('#receivedJobOffer').show().css('display', 'show');
+                        $('#emailNoticeDate').show().css('display', 'show');
+                        $('#interviewDate').show().css('display', 'show');
+                        $('#interview_date').prop('required', true);
+                        $('#interviewBy').show().css('display', 'show');
+                        $('#jobOfferSalary').show().css('display', 'show');
+                        $('#attendInterview').show().css('display', 'show');
+                        $('#availableDate').show().css('display', 'show');
+                        $('#interviewEmailNoticeDate').show().css('display', 'show');
+                    } else {
+                        $('#interviewTime').hide().css('display', 'none');
+                        $('#interviewCompany').hide().css('display', 'none');
+                        $('#interview_company').prop('required', false);
+                        $('#expectedSalary').hide().css('display', 'none');
+                        $('#interviewPosition').hide().css('display', 'none');
+                        $('#interview_position').prop('required', false);
+                        $('#receivedJobOffer').hide().css('display', 'none');
+                        $('#emailNoticeDate').hide().css('display', 'none');
+                        $('#interviewDate').hide().css('display', 'none');
+                        $('#interview_date').prop('required', false);
+                        $('#interviewBy').hide().css('display', 'none');
+                        $('#jobOfferSalary').hide().css('display', 'none');
+                        $('#attendInterview').hide().css('display', 'none');
+                        $('#availableDate').hide().css('display', 'none');
+                        $('#interviewEmailNoticeDate').hide().css('display', 'none');
+                    }
+
+                    if (selectedValue === '6') {
+                        $('#AssignToClient').show().css('display', 'show');
+                        $('#clientArNo').show().css('display', 'show');
+                        $('#assign_client_id').prop('required', true);
+                    } else {
+                        $('#AssignToClient').hide().css('display', 'none');
+                        $('#clientArNo').hide().css('display', 'none');
+                        $('#assign_client_id').prop('required', false);
+                    }
+
+                    if (selectedValue === '7') {
+                        $('#shortlistClientCompany').show().css('display', 'show');
+                        $('#shortlist_client_company').prop('required', true);
+                        $('#shortlistDepartment').show().css('display', 'show');
+                        $('#shortlistPlacement').show().css('display', 'show');
+                        $('#shortlistJobTitle').show().css('display', 'show');
+                        $('#shortlist_job_title').prop('required', true);
+                        $('#shortlistJobType').show().css('display', 'show');
+                        $('#shortlist_job_type').prop('required', true);
+                        $('#shortlistProbationPeriod').show().css('display', 'show');
+                        $('#shortlistContractSigningDate').show().css('display', 'show');
+                        $('#shortlistEmailNoticeDate').show().css('display', 'show');
+                        $('#shortlistSalary').show().css('display', 'show');
+                        $('#shortlist_salary').prop('required', true);
+                        $('#shortlistArNo').show().css('display', 'show');
+                        $('#shortlistHourlyRate').show().css('display', 'show');
+                        $('#shortlistAdminFee').show().css('display', 'show');
+                        $('#shortlistStartDate').show().css('display', 'show');
+                        $('#shortlist_start_date').prop('required', true);
+                        $('#shortlistReminderPeriod').show().css('display', 'show');
+                        $('#shortlist_reminder_period').prop('required', true);
+                        $('#shortlistContractSigningTime').show().css('display', 'show');
+                        $('#shortlist_contract_signing_time').prop('required', true);
+                        $('#shortlistLastDay').show().css('display', 'show');
+                        $('#shortlistEmailNoticeTime').show().css('display', 'show');
+                        $('#shortlistContractEndDate').show().css('display', 'show');
+                        $('#shortlist_contract_end_date').prop('required', true);
+                    } else {
+                        $('#shortlistClientCompany').hide().css('display', 'none');
+                        $('#shortlist_client_company').prop('required', false);
+                        $('#shortlistDepartment').hide().css('display', 'none');
+                        $('#shortlistPlacement').hide().css('display', 'none');
+                        $('#shortlistJobTitle').show().css('display', 'none');
+                        $('#shortlist_job_title').prop('required', false);
+                        $('#shortlistJobType').hide().css('display', 'none');
+                        $('#shortlist_job_type').prop('required', false);
+                        $('#shortlistProbationPeriod').hide().css('display', 'none');
+                        $('#shortlistContractSigningDate').hide().css('display', 'none');
+                        $('#shortlistEmailNoticeDate').hide().css('display', 'none');
+                        $('#shortlistSalary').hide().css('display', 'none');
+                        $('#shortlist_salary').prop('required', false);
+                        $('#shortlistArNo').hide().css('display', 'none');
+                        $('#shortlistHourlyRate').hide().css('display', 'none');
+                        $('#shortlistAdminFee').hide().css('display', 'none');
+                        $('#shortlistStartDate').hide().css('display', 'none');
+                        $('#shortlist_start_date').prop('required', false);
+                        $('#testone').hide().css('display', 'none');
+                        $('#shortlistReminderPeriod').hide().css('display', 'none');
+                        $('#shortlist_reminder_period').prop('required', false);
+                        $('#shortlistContractSigningTime').hide().css('display', 'none');
+                        $('#shortlist_contract_signing_time').prop('required', false);
+                        $('#shortlistLastDay').hide().css('display', 'none');
+                        $('#shortlistEmailNoticeTime').hide().css('display', 'none');
+                        $('#shortlistContractEndDate').hide().css('display', 'none');
+                        $('#shortlist_contract_end_date').prop('required', false);
+                    }
+
+                    if (selectedValue === '22') {
+                        $('#callbackDateInput').prop('required', true);
+                        $('#callbackTimeInput').prop('required', true);
+                    } else {
+                        $('#callbackDateInput').prop('required', false);
+                        $('#callbackTimeInput').prop('required', false);
+                    }
+
+                });
+                $('#remark_type_test').trigger('change');
+
+                function loadTimeSheetDetails(timesheetId) {
+                    let html = '';
+
+                    $.ajax({
+                        url: '/ATS/time/sheet/details/' + timesheetId,
+                        method: 'GET',
+                        success: function(response) {
+                            let entries = response.entries;
+                            entries = JSON.parse(entries);
+
+                            Object.values(entries).forEach(entry => {
+                                let isWorkChecked = entry.isWork === "on" ? 'checked' : '';
+                                let inTime = entry.in_time ? entry.in_time.substring(0, 5) : '';
+                                let outTime = entry.out_time ? entry.out_time.substring(0, 5) : '';
+                                let lunch_time = entry.lunch_time;
+
+                                html += `
+                                        <div class="form-group" id="${entry.day.toLowerCase()}">
+                                            <div class="row mt-3">
+                                                <label for="time_sheet_day" class="col-sm-1 control-label">${entry.day}</label>
+                                                <div class="col-sm-3">
+                                                    <input type="time" class="form-control" name="${entry.day.toLowerCase()}_in" placeholder="Time In" value="${inTime}">
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <input type="time" class="form-control" name="${entry.day.toLowerCase()}_out" placeholder="Time Out" value="${outTime}">
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <select class="form-control single-select-field" name="${entry.day.toLowerCase()}_lunch">
+                                                        <option value="30 minutes" ${lunch_time === '30 minutes' ? 'selected' : ''}>30 minutes</option>
+                                                        <option value="45 minutes" ${lunch_time === '45 minutes' ? 'selected' : ''}>45 minutes</option>
+                                                        <option value="1 hour" ${lunch_time === '1 hour' ? 'selected' : ''}>1 hour</option>
+                                                        <option value="1.5 hour" ${lunch_time === '1.5 hour' ? 'selected' : ''}>1.5 hour</option>
+                                                        <option value="2 hour" ${lunch_time === '2 hour' ? 'selected' : ''}>2 hour</option>
+                                                        <option value="" ${lunch_time === 'No Lunch' ? 'selected' : ''}>No Lunch</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <label>
+                                                        <input type="checkbox" name="${entry.day.toLowerCase()}_isWork" ${isWorkChecked}>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                            });
+
+                            $('#timeSheetEntries').html(html);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+                }
+
+                if ($('#sheet_type_id').val()) {
+                    loadTimeSheetDetails($('#sheet_type_id').val());
+                }
+
+                $('#sheet_type_id').change(function() {
+                    let timesheetId = $(this).val();
+                    loadTimeSheetDetails(timesheetId);
+                });
+
+                $(document).on('click', 'input[type="checkbox"]', function() {
+                    let day = $(this).attr('name').split('_')[0];
+
+                    let isChecked = $(this).prop('checked');
+
+                    if (isChecked) {
+                        $('#' + day).find(':input').val('');
+                        loadTimeSheetDetails($('#sheet_type_id').val());
+                    } else {
+                        $('#' + day).find(':input').val('');
+                    }
+                });
+
+                $('.isMainRadio').on('change', function() {
+                    // Get the candidate ID from the data attribute
+                    var resumeId = $(this).data('resume-id');
+                    var candidateId = $(this).data('candidate-id');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/ATS/candidate/resume/update/' + candidateId,
+                        data: {
+                            resumeId: resumeId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(error) {
+                            console.error('Ajax request failed:', error);
+                        }
+                    });
+                });
+            });
         </script>
 
 

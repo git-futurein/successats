@@ -7,6 +7,12 @@
 @endsection
 @section('css')
     @include('admin.include.select2')
+
+    <style>
+        .ck-editor__main .ck-editor__editable {
+            min-height: 125px !important;
+        }
+    </style>
 @endsection
 @section('body')
 <body>
@@ -83,24 +89,24 @@
                                     <input type="hidden" id="resume_path" name="resume_path" value="">
                                     <textarea name="resume_text" hidden></textarea>
                                     <div class="row mb-4">
-                                        <label for="one" class="col-sm-4 col-form-label">Name<span
+                                        <label for="one" class="col-sm-2 col-form-label">Name<span
                                                     class="text-danger">*</span></label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-10">
                                             <input type="text" id="name" name="name" class="form-control"
                                                 value="" placeholder="Name" required>
                                         </div>
                                     </div>
                                     <div class="row mb-4">
-                                        <label for="one" class="col-sm-4 col-form-label">Email<span
+                                        <label for="one" class="col-sm-2 col-form-label">Email<span
                                                     class="text-danger">*</span></label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-10">
                                             <input type="text" id="email" name="email" class="form-control"
                                                 value="" placeholder="Email" required>
                                         </div>
                                     </div>
                                     <div class="row mb-4">
-                                        <label for="one" class="col-sm-4 col-form-label">Phone No<span class="text-danger">*</span></label>
-                                        <div class="col-sm-8">
+                                        <label for="one" class="col-sm-2 col-form-label">Phone No<span class="text-danger">*</span></label>
+                                        <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <select class="form-control" id="country_code" name="country_code">
@@ -113,8 +119,8 @@
                                         </div>
                                     </div>
                                     <div class="row mb-4">
-                                        <label for="one" class="col-sm-4 col-form-label">Gender</label>
-                                        <div class="col-sm-8">
+                                        <label for="one" class="col-sm-2 col-form-label">Gender</label>
+                                        <div class="col-sm-10">
                                             <select name="gender" class="form-control single-select-field" id="gender">
                                                 <option value="">Select One</option>
                                                 <option value="Male">Male</option>
@@ -127,9 +133,9 @@
                                     @endphp
                                     @if($auth->roles_id != 8)
                                     <div class="row mb-4">
-                                        <label for="one" class="col-sm-4 col-form-label">Assign To<span
+                                        <label for="one" class="col-sm-2 col-form-label">Assign To<span
                                                     class="text-danger">*</span></label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-10">
                                             <select name="assign_to" required class="form-control single-select-field">
                                                 <option value="">Select One</option>
                                                 @foreach ($assignPerson as $assign)
@@ -143,9 +149,12 @@
                                         <input type="hidden" name="assign_to" value="{{ $auth->id }}">
                                     @endif
                                     <div class="row mb-4">
-                                        <label for="one" class="col-sm-4 col-form-label">Remarks</label>
-                                        <div class="col-sm-8 description_textarea">
-                                            <textarea name="remarks" id="ckeditor-classicss" class="editor " cols="41" rows="4"> {{ old('remarks') }} </textarea>
+                                        <label for="one" class="col-sm-2 col-form-label">Remarks</label>
+                                        <div class="col-sm-10 ">
+                                            <div class="description_textarea">
+                                                 <textarea name="remarks" id="ckeditor-classic" class="editor " cols="41" rows="4"> {{ old('remarks') }} </textarea>
+                                            </div>
+
                                         </div>
                                     </div>
                                     <button type="submit" id="" class="btn btn-info btn-sm">Add to list</button>
@@ -199,11 +208,11 @@
 @endsection
 
 @section('scripts')
-    <!-- ckeditor -->
-    <script src="{{ URL::asset('build/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
-    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
-
-    <!-- init js -->
+     <!-- ckeditor -->
+     <script src="{{ URL::asset('build/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
+     <!-- init js -->
+     <script src="{{ URL::asset('build/js/pages/form-editor.init.js') }}"></script>
+     <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>>
 
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
         integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>

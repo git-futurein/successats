@@ -88,7 +88,12 @@ Route::prefix('ATS')->group(function () {
     });
 
     Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard.index');
-    Route::post('/interviewAssign/{id}', [DashboardController::class, 'interviewAssign'])->name('admin.dashboard.interviewassign');
+    Route::get('/get/candidate/remark/{dashboard}', [DashboardController::class, 'candidateRemark'])->name('get.candidate.remark');
+    Route::post('/dashboard/candidate/remark', [DashboardController::class, 'DashboardCandidateRemark'])->name('dashboard.candidate.remark');
+
+
+    Route::get('/change/dashboard/remark/{dashboard}/{id}', [DashboardController::class, 'change_dashboard_remark'])->name('change.dashboard.remark');
+    // Route::post('/interviewAssign/{id}', [DashboardController::class, 'interviewAssign'])->name('admin.dashboard.interviewassign');
     // Route::get('/employeefetch',[App\Http\Controllers\Action\FetchEmployeeController::class])->name('employee.fetch');
 
     Route::resources([
@@ -214,7 +219,6 @@ Route::prefix('ATS')->group(function () {
     Route::get('/get/teamleader/{employee}',  [EmployeeController::class, 'getTeamleader'])->name('get.teamleader');
     Route::get('/time/sheet/details/{timesheet}',  [TimeSheetController::class, 'timeSheetDetails'])->name('time.sheet.details');
 
-    Route::get('/change/dashboard/remark/{dashboard}/{id}', [DashboardController::class, 'change_dashboard_remark'])->name('change.dashboard.remark');
     Route::get('/candidates/edit/remark/{candidate}/{remark}', [CandidateController::class, 'candidates_edit_remark'])->name('candidates.edit.remark');
     Route::post('/candidate/remark/update/{remark}', [CandidateController::class, 'candidate_remark_update'])->name('candidate.remark.update');
     Route::get('/client/tnctemplate/download/{client}', [ClientController::class, 'client_tnctemplate_download'])->name('client.tnctemplate.download');
